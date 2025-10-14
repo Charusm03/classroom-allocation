@@ -1,0 +1,31 @@
+Subject,Department,Year,Section,Students,Day,Time,Duration
+Data Structures,CSE,2,A,55,Monday,09:00,60
+Database Management,CSE,3,A,50,Monday,10:00,60
+Computer Networks,CSE,3,B,48,Monday,09:00,60
+Web Development,IT,3,A,52,Monday,11:00,60
+Mathematics,ECE,1,A,75,Monday,09:00,60
+Digital Electronics,ECE,2,A,45,Monday,10:00,60
+Physics,MECH,1,A,70,Tuesday,09:00,60
+Workshop Practice,MECH,2,A,38,Tuesday,10:00,120
+Data Structures,CSE,2,B,58,Tuesday,09:00,60
+Engineering Graphics,CIVIL,1,A,80,Tuesday,11:00,60
+Microprocessor,ECE,3,A,42,Wednesday,09:00,60
+Operating Systems,CSE,3,A,52,Wednesday,10:00,60
+Software Engineering,IT,4,A,48,Wednesday,09:00,60
+Artificial Intelligence,CSE,4,A,45,Wednesday,11:00,90
+Circuit Theory,ECE,2,B,40,Wednesday,14:00,60
+Thermodynamics,MECH,3,A,35,Thursday,09:00,60
+Fluid Mechanics,MECH,3,B,32,Thursday,10:00,60
+Structural Analysis,CIVIL,3,A,28,Thursday,09:00,60
+Computer Architecture,CSE,3,A,55,Thursday,11:00,60
+Discrete Mathematics,CSE,2,A,60,Friday,09:00,60
+Data Mining,CSE,4,A,42,Friday,10:00,90
+Embedded Systems,ECE,4,A,38,Friday,09:00,60
+Machine Learning,CSE,4,B,46,Friday,14:00,90
+Engineering Mechanics,CIVIL,2,A,65,Friday,15:00,60
+Compiler Design,CSE,4,A,44,Monday,14:00,60
+Digital Signal Processing,ECE,3,B,40,Monday,15:00,90
+Heat Transfer,MECH,3,A,36,Tuesday,14:00,60
+Surveying,CIVIL,2,A,50,Tuesday,15:00,90
+Cloud Computing,IT,4,A,48,Wednesday,15:00,60
+VLSI Design,ECE,4,A,35,Thursday,14:00,90
