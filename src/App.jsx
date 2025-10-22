@@ -76,19 +76,19 @@ const ITClassroomAllocation = () => {
   ];
 
   const classrooms = [
-    { id: '1101', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1101' },
-    { id: '1102', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1102' },
-    { id: '1103', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1103' },
-    { id: '1104', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1104' },
-    { id: '1105', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1105' },
-    { id: '1106', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1106' },
-    { id: '1201', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1201' },
-    { id: '1202', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1202' },
-    { id: '1203', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1203' },
-    { id: '1204', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1204' },
-    { id: '1301', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1301' },
-    { id: '1302', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1302' },
-    { id: '1303', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1303' },
+    { id: '1101', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1101' },
+    { id: '1102', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1102' },
+    { id: '1103', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1103' },
+    { id: '1104', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1104' },
+    { id: '1105', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1105' },
+    { id: '1106', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1106' },
+    { id: '1201', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1201' },
+    { id: '1202', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1202' },
+    { id: '1203', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1203' },
+    { id: '1204', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1204' },
+    { id: '1301', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1301' },
+    { id: '1302', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1302' },
+    { id: '1303', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1303' },
     { id: 'Open Source Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Open Source Lab' },
     { id: 'Internet Technology Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Internet Tech Lab' },
     { id: 'Database Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Database Lab' },
@@ -1093,10 +1093,10 @@ const ITClassroomAllocation = () => {
                   {alloc.faculty && <div className="text-xs text-gray-600">by {alloc.faculty}</div>}
                 </td>
                 <td className="p-3 text-gray-700">
-                  {alloc.year === '1' && '🟢'} 
-                  {alloc.year === '2' && '🔵'} 
-                  {alloc.year === '3' && '🟣'} 
-                  {alloc.year === '4' && '🔴'} 
+                  {alloc.year === '1'} 
+                  {alloc.year === '2'} 
+                  {alloc.year === '3'} 
+                  {alloc.year === '4'} 
                   {alloc.year}-{alloc.section}
                 </td>
                 <td className="p-3 text-gray-700">{alloc.students}</td>
@@ -1199,10 +1199,10 @@ const ITClassroomAllocation = () => {
                     onChange={(e) => setCurrentClass({ ...currentClass, year: e.target.value })}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                   >
-                    <option value="1">1st Year 🟢</option>
-                    <option value="2">2nd Year 🔵</option>
-                    <option value="3">3rd Year 🟣</option>
-                    <option value="4">4th Year 🔴</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                    <option value="3">3rd Year</option>
+                    <option value="4">4th Year</option>
                   </select>
                 </div>
                 
@@ -1322,10 +1322,10 @@ const ITClassroomAllocation = () => {
                       <div key={cls.id} className="bg-gray-50 border border-gray-300 rounded-lg p-4 flex justify-between items-center">
                         <div>
                           <p className="font-semibold text-gray-800">
-                            {cls.year === '1' && '🟢'} 
-                            {cls.year === '2' && '🔵'} 
-                            {cls.year === '3' && '🟣'} 
-                            {cls.year === '4' && '🔴'} 
+                            {cls.year === '1'} 
+                            {cls.year === '2'} 
+                            {cls.year === '3'} 
+                            {cls.year === '4'} 
                             Year {cls.year} - Section {cls.section}
                           </p>
                           <p className="text-sm text-gray-700">
@@ -1541,10 +1541,10 @@ const ITClassroomAllocation = () => {
                       className="px-3 py-2 rounded font-medium text-sm bg-white text-gray-800 border border-gray-300"
                     >
                       <option value="all">All Years</option>
-                      <option value="1">Year 1 🟢</option>
-                      <option value="2">Year 2 🔵</option>
-                      <option value="3">Year 3 🟣</option>
-                      <option value="4">Year 4 🔴</option>
+                      <option value="1">Year 1</option>
+                      <option value="2">Year 2</option>
+                      <option value="3">Year 3</option>
+                      <option value="4">Year 4</option>
                     </select>
                     
                     <select
