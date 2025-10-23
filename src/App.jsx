@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Upload, Download, AlertCircle, CheckCircle, Building2, Users, TrendingUp, FileUp, Loader, X, Plus, Trash2, Clock, User, BookOpen, Settings, Image as ImageIcon } from 'lucide-react';
+import { Calendar, Upload, Download, AlertCircle, CheckCircle, Building2, Users, TrendingUp, FileUp, Loader, X, Plus, Trash2, Clock, User, BookOpen } from 'lucide-react';
 
 const ITClassroomAllocation = () => {
   const [activeTab, setActiveTab] = useState('input');
@@ -41,7 +41,6 @@ const ITClassroomAllocation = () => {
   const [filterDay, setFilterDay] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [imageEnhancement, setImageEnhancement] = useState(true);
 
   const facultyList = [
     'Dr. N. ANANTHI - Professor',
@@ -76,73 +75,35 @@ const ITClassroomAllocation = () => {
   ];
 
   const classrooms = [
-    { id: '1101', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1101' },
-    { id: '1102', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1102' },
-    { id: '1103', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1103' },
-    { id: '1104', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1104' },
-    { id: '1105', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1105' },
-    { id: '1106', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1106' },
-    { id: '1201', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1201' },
-    { id: '1202', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1202' },
-    { id: '1203', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1203' },
-    { id: '1204', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1204' },
-    { id: '1301', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1301' },
-    { id: '1302', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1302' },
-    { id: '1303', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1303' },
+    { id: '1101', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1101' },
+    { id: '1102', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1102' },
+    { id: '1103', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1103' },
+    { id: '1104', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1104' },
+    { id: '1105', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1105' },
+    { id: '1106', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', symbol: '🟢', name: 'Room 1106' },
+    { id: '1201', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1201' },
+    { id: '1202', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1202' },
+    { id: '1203', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1203' },
+    { id: '1204', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1204' },
+    { id: '1301', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1301' },
+    { id: '1302', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1302' },
+    { id: '1303', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', symbol: '🔵🟣', name: 'Room 1303' },
     { id: 'Open Source Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Open Source Lab' },
     { id: 'Internet Technology Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Internet Tech Lab' },
     { id: 'Database Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Database Lab' },
     { id: 'Software Engineering Lab', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', symbol: '💻', name: 'Software Eng Lab' }
   ];
 
-  // Enhanced lab subjects with specific room mappings
   const labSubjects = [
-    'NP Lab',
-    'FSWD Lab', 
-    'MP Lab',
-    'DSA(L)',
-    'OOPJ(L)',
-    'FAIML(L)',
-    'Networks Programming Lab',
-    'Full Stack Web Development Lab',
-    'Mini Project',
+    'Networks Programming Lab (NP)',
+    'Full Stack Web Development Lab (FSWD)',
+    'Mini Project (MP)',
     'Data Structures Lab',
-    'Object Oriented Programming Java Lab',
-    'Fundamentals of AI/ML Lab'
+    'Database Lab',
+    'Web Technologies Lab',
+    'AI/ML Lab',
+    'Cloud Computing Lab'
   ];
-
-  // Lab to room mapping based on your requirements
-  const labRoomMapping = {
-    // NP Lab → Open Source Lab
-    'NP': 'Open Source Lab',
-    'NP Lab': 'Open Source Lab',
-    'Networks Programming Lab': 'Open Source Lab',
-    
-    // FSWD Lab → Software Engineering Lab
-    'FSWD': 'Software Engineering Lab',
-    'FSWD Lab': 'Software Engineering Lab',
-    'Full Stack Web Development Lab': 'Software Engineering Lab',
-    
-    // OOPJ Lab → Software Engineering Lab
-    'OOPJ': 'Software Engineering Lab',
-    'OOPJ(L)': 'Software Engineering Lab',
-    'Object Oriented Programming Java Lab': 'Software Engineering Lab',
-    
-    // FAIML Lab → Internet Technology Lab
-    'FAIML': 'Internet Technology Lab',
-    'FAIML(L)': 'Internet Technology Lab',
-    'Fundamentals of AI/ML Lab': 'Internet Technology Lab',
-    
-    // DSA Lab → Database Lab
-    'DSA': 'Database Lab',
-    'DSA(L)': 'Database Lab',
-    'Data Structures Lab': 'Database Lab',
-    
-    // MP Lab → Classrooms based on year
-    'MP': '1101', // Default for first year
-    'MP Lab': '1101',
-    'Mini Project': '1101'
-  };
 
   const timeSlots = [
     { time: '08:15', label: '8:15 AM' },
@@ -154,59 +115,6 @@ const ITClassroomAllocation = () => {
     { time: '14:15', label: '2:15 PM' },
     { time: '15:00', label: '3:00 PM' }
   ];
-
-  // Enhanced image preprocessing with multiple enhancement techniques
-  const preprocessImage = (file) => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      
-      img.onload = function() {
-        // Double the resolution for better OCR
-        canvas.width = img.width * 2;
-        canvas.height = img.height * 2;
-        
-        // Draw original image
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
-        if (imageEnhancement) {
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const data = imageData.data;
-          
-          // Multiple enhancement techniques
-          for (let i = 0; i < data.length; i += 4) {
-            // 1. Increase contrast
-            const contrast = 1.5;
-            data[i] = ((data[i] - 128) * contrast) + 128;
-            data[i + 1] = ((data[i + 1] - 128) * contrast) + 128;
-            data[i + 2] = ((data[i + 2] - 128) * contrast) + 128;
-            
-            // 2. Adjust brightness
-            const brightness = 20;
-            data[i] = Math.min(255, Math.max(0, data[i] + brightness));
-            data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + brightness));
-            data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + brightness));
-            
-            // 3. Sharpen edges (simplified)
-            if (i > canvas.width * 4 && i < data.length - canvas.width * 4) {
-              // Simple edge enhancement
-              const sharpen = 0.3;
-              data[i] = Math.min(255, Math.max(0, data[i] + 
-                (data[i] - data[i - 4]) * sharpen));
-            }
-          }
-          
-          ctx.putImageData(imageData, 0, 0);
-        }
-        
-        // Convert to high-quality JPEG
-        canvas.toBlob(resolve, 'image/jpeg', 0.95);
-      };
-      
-      img.src = URL.createObjectURL(file);
-    });
-  };
 
   const performOCR = async (file) => {
     return new Promise((resolve, reject) => {
@@ -231,14 +139,6 @@ const ITClassroomAllocation = () => {
   };
 
   const performOCRWithTesseract = async (file) => {
-    let processedFile = file;
-    
-    // Preprocess image if enhancement is enabled
-    if (imageEnhancement && file.type.startsWith('image/')) {
-      setProcessingStatus('🖼️ Enhancing image quality...');
-      processedFile = await preprocessImage(file);
-    }
-    
     const worker = await window.Tesseract.createWorker({
       logger: m => {
         if (m.status === 'recognizing text') {
@@ -252,16 +152,13 @@ const ITClassroomAllocation = () => {
     await worker.initialize('eng');
     await worker.setParameters({
       tessedit_pageseg_mode: window.Tesseract.PSM.AUTO,
-      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789():-,. ',
     });
-    
-    const { data: { text } } = await worker.recognize(processedFile);
+    const { data: { text } } = await worker.recognize(file);
     await worker.terminate();
     
     return text;
   };
 
-  // Enhanced timetable parser with better lab detection
   const parseTimetable = (text) => {
     const parsed = [];
     const days = ['MON', 'MONDAY', 'TUE', 'TUES', 'TUESDAY', 'WED', 'WEDNESDAY', 'THU', 'THUR', 'THURS', 'THURSDAY', 'FRI', 'FRIDAY'];
@@ -287,125 +184,59 @@ const ITClassroomAllocation = () => {
     const lines = text.split('\n');
     let currentDay = null;
     
-    // Enhanced lab detection patterns
-    const labPatterns = [
-      /NP\s*(LAB)?/i,
-      /FSWD\s*(LAB)?/i,
-      /MP\s*(LAB)?/i,
-      /DSA\s*\(?L\)?/i,
-      /OOPJ\s*\(?L\)?/i,
-      /FAIML\s*\(?L\)?/i,
-      /NETWORKS?\s*PROGRAMMING?\s*(LAB)?/i,
-      /FULL\s*STACK\s*(LAB)?/i,
-      /MINI\s*PROJECT/i,
-      /DATA\s*STRUCTURES?\s*(LAB)?/i,
-      /OBJECT\s*ORIENTED\s*PROGRAMMING?\s*(LAB)?/i,
-      /AI\s*ML\s*(LAB)?/i,
-      /ARTIFICIAL\s*INTELLIGENCE\s*(LAB)?/i
-    ];
-    
     for (let line of lines) {
       const upperLine = line.trim().toUpperCase();
       
-      // Check for day headers
       for (let day of days) {
         if (upperLine.includes(day)) {
           currentDay = dayMap[day];
+          
+          const restOfLine = line.substring(upperLine.indexOf(day) + day.length).trim();
+          const subjects = restOfLine.split(/[\s\|\/\t]+/).filter(s => 
+            s.length > 1 && 
+            !s.match(/BREAK|LUNCH|^\d+\.\d+|^\d+:\d+/) &&
+            s.match(/[A-Z]{2,}/)
+          );
+          
+          subjects.forEach((subject, idx) => {
+            if (idx < timeSlotsDef.length) {
+              const isLab = subject.includes('LAB') || subject.includes('PROJECT') || subject.includes('MP') || subject.includes('FSWD');
+              parsed.push({
+                subject: subject.trim(),
+                day: currentDay,
+                time: timeSlotsDef[idx].time,
+                duration: isLab ? 120 : 50,
+                students: isLab ? 30 : 60
+              });
+            }
+          });
           break;
         }
       }
       
-      if (currentDay) {
-        // Extract subjects from the line
-        const subjectMatches = upperLine.match(/[A-Z]{2,}(?:\s*\(?[A-Z]?\)?)?(?:\s*LAB)?/g) || [];
+      if (currentDay && !days.some(d => upperLine.includes(d))) {
+        const subjects = line.trim().split(/[\s\|\/\t]+/).filter(s => 
+          s.length > 1 && 
+          !s.match(/BREAK|LUNCH|^\d+\.\d+|^\d+:\d+/) &&
+          s.match(/[A-Z]{2,}/)
+        );
         
-        subjectMatches.forEach((subject, idx) => {
-          if (idx < timeSlotsDef.length && subject.length > 1) {
-            // Skip if it's a day name
-            if (days.some(day => subject.includes(day))) return;
-            
-            // Enhanced lab detection
-            const isLab = labPatterns.some(pattern => pattern.test(subject));
-            
-            // Determine duration - labs are 3-4 periods (135-180 minutes)
-            const duration = isLab ? 180 : 50; // 3 hours for labs
-            
+        if (subjects.length > 0 && subjects.length <= timeSlotsDef.length) {
+          subjects.forEach((subject, idx) => {
+            const isLab = subject.includes('LAB') || subject.includes('PROJECT') || subject.includes('MP') || subject.includes('FSWD');
             parsed.push({
               subject: subject.trim(),
               day: currentDay,
               time: timeSlotsDef[idx].time,
-              duration: duration,
-              students: isLab ? 30 : 60,
-              type: isLab ? 'LAB' : 'THEORY'
+              duration: isLab ? 120 : 50,
+              students: isLab ? 30 : 60
             });
-          }
-        });
+          });
+        }
       }
     }
     
-    // Remove duplicates and validate
-    const uniqueSessions = [];
-    const sessionMap = new Map();
-    
-    parsed.forEach(session => {
-      const key = `${session.day}-${session.time}-${session.subject}`;
-      if (!sessionMap.has(key)) {
-        sessionMap.set(key, true);
-        uniqueSessions.push(session);
-      }
-    });
-    
-    return uniqueSessions;
-  };
-
-  // Auto-generate lab rules based on subject and year
-  const generateLabRules = (timetableData, year, section) => {
-    const labRules = [];
-    
-    timetableData.forEach(session => {
-      if (session.type === 'LAB') {
-        const subject = session.subject.toUpperCase();
-        let labRoom = '';
-        
-        // Determine lab room based on subject and mapping
-        if (subject.includes('NP') || subject.includes('NETWORKS PROGRAMMING')) {
-          labRoom = 'Open Source Lab';
-        } else if (subject.includes('FSWD') || subject.includes('FULL STACK')) {
-          labRoom = 'Software Engineering Lab';
-        } else if (subject.includes('OOPJ') || subject.includes('OBJECT ORIENTED')) {
-          labRoom = 'Software Engineering Lab';
-        } else if (subject.includes('FAIML') || subject.includes('AI/ML') || subject.includes('ARTIFICIAL INTELLIGENCE')) {
-          labRoom = 'Internet Technology Lab';
-        } else if (subject.includes('DSA') || subject.includes('DATA STRUCTURES')) {
-          labRoom = 'Database Lab';
-        } else if (subject.includes('MP') || subject.includes('MINI PROJECT')) {
-          // MP in regular classrooms based on year
-          if (year === '1') {
-            labRoom = '1101'; // First year MP in 1101
-          } else if (year === '2') {
-            labRoom = '1201'; // Second year MP in 1201
-          } else {
-            labRoom = '1301'; // Third/Fourth year MP in 1301
-          }
-        }
-        
-        if (labRoom) {
-          const existingRule = labRules.find(rule => rule.subject === session.subject);
-          if (!existingRule) {
-            labRules.push({
-              subject: session.subject,
-              labType: subject.includes('MP') ? 'whole' : 'split',
-              batch1Room: labRoom,
-              batch2Room: subject.includes('MP') ? '' : labRoom, // MP uses same room for both batches
-              wholeClassRoom: subject.includes('MP') ? labRoom : '',
-              strength: 30
-            });
-          }
-        }
-      }
-    });
-    
-    return labRules;
+    return parsed;
   };
 
   const handleTimetableUpload = async (e) => {
@@ -419,7 +250,7 @@ const ITClassroomAllocation = () => {
       let text = '';
       
       if (file.type.startsWith('image/')) {
-        setProcessingStatus('🖼️ Enhancing and extracting text from image...');
+        setProcessingStatus('🖼️ Extracting text from image...');
         text = await performOCR(file);
       } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
         text = await file.text();
@@ -429,26 +260,19 @@ const ITClassroomAllocation = () => {
         throw new Error('Unsupported file format');
       }
 
-      console.log('Extracted text:', text); // For debugging
-      
       const timetableData = parseTimetable(text);
       
       if (timetableData.length === 0) {
-        throw new Error('No timetable data extracted. Please check image quality or try manual entry.');
+        throw new Error('No timetable data extracted. Please check image quality or format.');
       }
-      
-      // Auto-generate lab rules
-      const autoLabRules = generateLabRules(timetableData, currentClass.year, currentClass.section);
       
       setCurrentClass({
         ...currentClass,
         timetableFile: timetableData,
-        timetableName: file.name,
-        labRules: [...currentClass.labRules, ...autoLabRules]
+        timetableName: file.name
       });
       
-      const labCount = timetableData.filter(s => s.type === 'LAB').length;
-      setProcessingStatus(`✅ Timetable loaded! ${timetableData.length} sessions extracted (${labCount} labs, ${autoLabRules.length} auto-generated rules)`);
+      setProcessingStatus(`✅ Timetable loaded! ${timetableData.length} sessions extracted`);
     } catch (error) {
       console.error('Error processing timetable:', error);
       setProcessingStatus(`❌ Error: ${error.message}`);
@@ -580,14 +404,6 @@ const ITClassroomAllocation = () => {
     return conflictWithAllocations || conflictWithBookings;
   };
 
-  // Get MP room based on year
-  const getMPRoom = (year) => {
-    if (year === '1') return '1101';
-    if (year === '2') return '1201';
-    if (year === '3') return '1301';
-    return '1301'; // Default for 4th year
-  };
-
   const allocateRooms = () => {
     const newAllocations = [];
     const newConflicts = [];
@@ -599,13 +415,11 @@ const ITClassroomAllocation = () => {
         const sessionId = `${year}-${section}-${session.day}-${session.time}`;
         
         const labRule = labRules.find(rule => 
-          session.subject.toUpperCase().includes(rule.subject.toUpperCase().split('(')[0].trim())
+          session.subject.includes(rule.subject.split('(')[0].trim())
         );
         
-        if (labRule || session.type === 'LAB') {
-          // Handle lab sessions
-          if (labRule?.labType === 'split' && !session.subject.toUpperCase().includes('MP')) {
-            // Split batch lab (except MP)
+        if (labRule) {
+          if (labRule.labType === 'split') {
             const batch1 = {
               id: sessionId + '-batch1',
               subject: `${session.subject} (Batch 1)`,
@@ -652,35 +466,20 @@ const ITClassroomAllocation = () => {
               newConflicts.push({ ...batch2, reason: 'Room conflict for Batch 2' });
             }
           } else {
-            // Whole class lab or MP
-            let room;
-            if (session.subject.toUpperCase().includes('MP')) {
-              room = getMPRoom(year);
-            } else {
-              // Find the appropriate lab room
-              const subjectKey = Object.keys(labRoomMapping).find(key => 
-                session.subject.toUpperCase().includes(key.toUpperCase())
-              );
-              room = subjectKey ? labRoomMapping[subjectKey] : 'Open Source Lab';
-            }
-            
             const wholeClass = {
               id: sessionId,
               subject: session.subject,
               department: 'IT',
               year: year,
               section: section,
-              students: session.subject.toUpperCase().includes('MP') ? 60 : 30,
+              students: 60,
               day: session.day,
               time: session.time,
               duration: session.duration,
-              room: room,
+              room: labRule.wholeClassRoom,
               building: 'IT Block',
-              roomCapacity: session.subject.toUpperCase().includes('MP') ? 
-                classrooms.find(r => r.id === room)?.capacity || 60 : 30,
-              utilization: session.subject.toUpperCase().includes('MP') ? 
-                ((60 / (classrooms.find(r => r.id === room)?.capacity || 60)) * 100).toFixed(1) : 
-                ((30 / 30) * 100).toFixed(1),
+              roomCapacity: classrooms.find(r => r.id === labRule.wholeClassRoom)?.capacity || 60,
+              utilization: ((60 / (classrooms.find(r => r.id === labRule.wholeClassRoom)?.capacity || 60)) * 100).toFixed(1),
               type: 'LAB'
             };
             
@@ -691,7 +490,6 @@ const ITClassroomAllocation = () => {
             }
           }
         } else {
-          // Theory session allocation
           const suitableRooms = classrooms.filter(room => 
             room.type === 'THEORY' &&
             (room.year === year || room.year.includes(year)) &&
@@ -736,7 +534,6 @@ const ITClassroomAllocation = () => {
       });
     });
     
-    // Add manual bookings
     manualBookings.forEach(booking => {
       newAllocations.push({
         id: `manual-${booking.id}`,
@@ -768,23 +565,14 @@ const ITClassroomAllocation = () => {
     const totalRooms = classrooms.length;
     const usedRooms = new Set(allocs.map(a => a.room)).size;
     const freeRooms = totalRooms - usedRooms;
-    
-    // Calculate utilization only for non-manual bookings
-    const nonManualAllocs = allocs.filter(a => a.type !== 'MANUAL' && a.utilization !== '-');
-    const avgUtilization = nonManualAllocs.length > 0 
-      ? nonManualAllocs.reduce((sum, a) => sum + parseFloat(a.utilization), 0) / nonManualAllocs.length : 0;
+    const avgUtilization = allocs.filter(a => a.utilization !== '-').length > 0 
+      ? allocs.filter(a => a.utilization !== '-').reduce((sum, a) => sum + parseFloat(a.utilization), 0) / allocs.filter(a => a.utilization !== '-').length : 0;
     
     const byDay = {};
     allocs.forEach(a => { byDay[a.day] = (byDay[a.day] || 0) + 1; });
     
     const byYear = {};
     allocs.forEach(a => { if (a.year !== '-') byYear[a.year] = (byYear[a.year] || 0) + 1; });
-    
-    const byType = {
-      'THEORY': allocs.filter(a => a.type === 'THEORY').length,
-      'LAB': allocs.filter(a => a.type === 'LAB').length,
-      'MANUAL': allocs.filter(a => a.type === 'MANUAL').length
-    };
     
     const roomSchedule = {};
     classrooms.forEach(room => {
@@ -825,7 +613,6 @@ const ITClassroomAllocation = () => {
       utilizationRate: avgUtilization.toFixed(1),
       byDay,
       byYear,
-      byType,
       conflicts: confs.length,
       roomSchedule,
       manualBookingsCount: manualBookings.length
@@ -839,12 +626,9 @@ const ITClassroomAllocation = () => {
     csv += `Generated on,${new Date().toLocaleString()}\n`;
     csv += `Total Classes,${classes.length}\n`;
     csv += `Total Allocations,${allocations.length}\n`;
-    csv += `Theory Sessions,${analytics?.byType?.THEORY || 0}\n`;
-    csv += `Lab Sessions,${analytics?.byType?.LAB || 0}\n`;
     csv += `Manual Bookings,${manualBookings.length}\n`;
     csv += `Conflicts,${conflicts.length}\n`;
     csv += `Free Rooms,${analytics?.freeRooms || 0}\n`;
-    csv += `Average Utilization,${analytics?.utilizationRate || 0}%\n`;
     csv += '\n\n';
     
     csv += 'SUMMARY ANALYTICS\n';
@@ -853,11 +637,9 @@ const ITClassroomAllocation = () => {
       csv += `Total Allocations,${analytics.totalAllocations}\n`;
       csv += `Rooms Used,${analytics.roomsUsed} of ${analytics.totalRooms}\n`;
       csv += `Free Rooms,${analytics.freeRooms}\n`;
-      csv += `Theory Sessions,${analytics.byType.THEORY}\n`;
-      csv += `Lab Sessions,${analytics.byType.LAB}\n`;
-      csv += `Manual Bookings,${analytics.byType.MANUAL}\n`;
       csv += `Average Utilization,${analytics.utilizationRate}%\n`;
       csv += `Conflicts,${analytics.conflicts}\n`;
+      csv += `Manual Bookings,${analytics.manualBookingsCount}\n`;
     }
     csv += '\n\n';
     
@@ -957,49 +739,49 @@ const ITClassroomAllocation = () => {
 
     return (
       <div className="space-y-4">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">Room Availability & Free Time Slots</h3>
+        <h3 className="text-2xl font-black text-teal-900 mb-4">🔍 Room Availability & Free Time Slots</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Object.entries(analytics.roomSchedule).map(([roomId, data]) => (
             <div
               key={roomId}
-              className={`border rounded-lg p-4 shadow-sm transition-all cursor-pointer ${
+              className={`border-4 rounded-xl p-4 shadow-lg transform hover:scale-105 transition-all cursor-pointer ${
                 data.allocations.length === 0 
-                  ? 'bg-green-50 border-green-200' 
+                  ? 'bg-gradient-to-br from-green-100 to-emerald-100 border-green-400' 
                   : data.freeSlots.length > 8 
-                    ? 'bg-amber-50 border-amber-200'
-                    : 'bg-red-50 border-red-200'
+                    ? 'bg-gradient-to-br from-yellow-100 to-amber-100 border-yellow-400'
+                    : 'bg-gradient-to-br from-red-100 to-pink-100 border-red-400'
               }`}
               onClick={() => setSelectedRoom(selectedRoom === roomId ? null : roomId)}
             >
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <div className="text-lg font-semibold text-gray-800">{getRoomSymbol(roomId)} {roomId}</div>
-                  <div className="text-sm text-gray-600">{data.room.name}</div>
+                  <div className="text-xl font-black text-teal-900">{getRoomSymbol(roomId)} {roomId}</div>
+                  <div className="text-sm text-teal-700">{data.room.name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xl font-bold text-gray-800">{data.freeSlots.length}</div>
-                  <div className="text-xs text-gray-500">Free Slots</div>
+                  <div className="text-2xl font-black text-teal-900">{data.freeSlots.length}</div>
+                  <div className="text-xs text-teal-600">Free Slots</div>
                 </div>
               </div>
               
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-teal-700">
                 <div>Capacity: {data.room.capacity}</div>
                 <div>Allocated: {data.allocations.length} sessions</div>
               </div>
 
               {selectedRoom === roomId && (
-                <div className="mt-3 bg-white rounded border border-gray-200 p-3">
-                  <div className="font-semibold text-gray-800 mb-2">Free Time Slots:</div>
+                <div className="mt-3 bg-white rounded-lg p-3 border-2 border-teal-300">
+                  <div className="font-bold text-teal-900 mb-2">Free Time Slots:</div>
                   <div className="max-h-32 overflow-y-auto text-xs">
                     {data.freeSlots.length > 0 ? (
                       data.freeSlots.map((slot, idx) => (
-                        <div key={idx} className="flex justify-between py-1 border-b border-gray-100">
-                          <span className="text-gray-700">{slot.day}</span>
-                          <span className="text-gray-600">{slot.time}</span>
+                        <div key={idx} className="flex justify-between py-1 border-b border-teal-100">
+                          <span className="text-teal-800">{slot.day}</span>
+                          <span className="text-teal-600">{slot.time}</span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-center py-2 text-gray-500">No free slots available</div>
+                      <div className="text-center py-2 text-teal-600">No free slots available</div>
                     )}
                   </div>
                 </div>
@@ -1017,38 +799,38 @@ const ITClassroomAllocation = () => {
     const filtered = getFilteredAllocations();
 
     return (
-      <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-sm">
+      <div className="overflow-x-auto border-4 border-cyan-400 rounded-xl shadow-2xl">
         <table className="w-full text-sm bg-white">
-          <thead className="bg-gray-800 text-white">
+          <thead className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
             <tr>
-              <th className="p-3 text-left font-semibold border-r border-gray-600 sticky left-0 bg-gray-800">Time</th>
+              <th className="p-3 text-left font-black border-4 border-cyan-300 sticky left-0 bg-teal-600">Time</th>
               {days.map(day => (
-                <th key={day} className="p-3 text-center font-semibold border-r border-gray-600">{day}</th>
+                <th key={day} className="p-3 text-center font-black border-4 border-cyan-300">{day}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {times.map((time, idx) => (
-              <tr key={time} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                <td className="p-3 font-medium text-gray-700 border-r border-gray-200 sticky left-0 bg-gray-100">{time}</td>
+              <tr key={time} className={idx % 2 === 0 ? 'bg-cyan-50' : 'bg-teal-50'}>
+                <td className="p-3 font-bold text-teal-900 border-4 border-cyan-200 sticky left-0 bg-gradient-to-r from-cyan-100 to-teal-100">{time}</td>
                 {days.map(day => {
                   const sessionsAtTime = filtered.filter(a => a.time === time && a.day === day);
                   return (
-                    <td key={day} className="p-2 border-r border-gray-200 align-top">
+                    <td key={day} className="p-2 border-4 border-cyan-200 align-top">
                       {sessionsAtTime.length > 0 ? (
                         <div className="space-y-1">
                           {sessionsAtTime.map((s, i) => (
                             <div
                               key={i}
-                              className={`p-2 rounded text-xs font-medium ${
+                              className={`p-2 rounded-lg text-xs font-bold shadow-md ${
                                 s.type === 'LAB'
-                                  ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                                  ? 'bg-gradient-to-br from-purple-400 to-pink-400 text-white'
                                   : s.type === 'MANUAL'
-                                  ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                                  : 'bg-gray-100 text-gray-800 border border-gray-200'
+                                  ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white'
+                                  : 'bg-gradient-to-br from-cyan-300 to-blue-400 text-blue-900'
                               }`}
                             >
-                              <div className="font-semibold">{getRoomSymbol(s.room)} {s.room}</div>
+                              <div className="font-black">{getRoomSymbol(s.room)} {s.room}</div>
                               <div className="text-xs opacity-90">{s.year}-{s.section}</div>
                               {s.faculty && <div className="text-xs opacity-90">{s.faculty.split(' - ')[0]}</div>}
                             </div>
@@ -1072,45 +854,45 @@ const ITClassroomAllocation = () => {
     const filtered = getFilteredAllocations();
 
     return (
-      <div className="max-h-96 overflow-y-auto border border-gray-300 rounded-lg shadow-sm">
+      <div className="max-h-96 overflow-y-auto border-4 border-cyan-400 rounded-xl">
         <table className="w-full text-sm bg-white">
-          <thead className="bg-gray-800 text-white sticky top-0">
+          <thead className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white sticky top-0">
             <tr>
-              <th className="p-3 text-left font-semibold">Subject</th>
-              <th className="p-3 text-left font-semibold">Year-Sec</th>
-              <th className="p-3 text-left font-semibold">Students</th>
-              <th className="p-3 text-left font-semibold">Day & Time</th>
-              <th className="p-3 text-left font-semibold">Room</th>
-              <th className="p-3 text-left font-semibold">Type</th>
-              <th className="p-3 text-left font-semibold">Utilization</th>
+              <th className="p-3 text-left font-black">Subject</th>
+              <th className="p-3 text-left font-black">Year-Sec</th>
+              <th className="p-3 text-left font-black">Students</th>
+              <th className="p-3 text-left font-black">Day & Time</th>
+              <th className="p-3 text-left font-black">Room</th>
+              <th className="p-3 text-left font-black">Type</th>
+              <th className="p-3 text-left font-black">Utilization</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((alloc, idx) => (
-              <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                <td className="p-3 text-gray-800">
+              <tr key={idx} className="border-b border-cyan-100 hover:bg-cyan-50 transition-colors">
+                <td className="p-3 text-teal-900">
                   {alloc.subject}
-                  {alloc.faculty && <div className="text-xs text-gray-600">by {alloc.faculty}</div>}
+                  {alloc.faculty && <div className="text-xs text-teal-600">by {alloc.faculty}</div>}
                 </td>
-                <td className="p-3 text-gray-700">
-                  {alloc.year === '1'} 
-                  {alloc.year === '2'} 
-                  {alloc.year === '3'} 
-                  {alloc.year === '4'} 
+                <td className="p-3 text-teal-800">
+                  {alloc.year === '1' && '🟢'} 
+                  {alloc.year === '2' && '🔵'} 
+                  {alloc.year === '3' && '🟣'} 
+                  {alloc.year === '4' && '🔴'} 
                   {alloc.year}-{alloc.section}
                 </td>
-                <td className="p-3 text-gray-700">{alloc.students}</td>
-                <td className="p-3 text-gray-700">{alloc.day} {alloc.time}</td>
-                <td className="p-3 font-semibold text-gray-800">
+                <td className="p-3 text-teal-800">{alloc.students}</td>
+                <td className="p-3 text-teal-800">{alloc.day} {alloc.time}</td>
+                <td className="p-3 font-black text-teal-900">
                   {getRoomSymbol(alloc.room)} {alloc.room}
                 </td>
                 <td className="p-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  <span className={`px-3 py-1 rounded-full text-xs font-black ${
                     alloc.type === 'LAB' 
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                      ? 'bg-purple-100 text-purple-800 border border-purple-300' 
                       : alloc.type === 'MANUAL'
-                      ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                      : 'bg-gray-100 text-gray-800 border border-gray-200'
+                      ? 'bg-yellow-100 text-yellow-800 border border-yellow-300'
+                      : 'bg-blue-100 text-blue-800 border border-blue-300'
                   }`}>
                     {alloc.type}
                   </span>
@@ -1123,7 +905,7 @@ const ITClassroomAllocation = () => {
                         style={{ width: `${alloc.utilization}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-700 font-medium">{alloc.utilization}%</span>
+                    <span className="text-xs text-teal-800 font-black">{alloc.utilization}%</span>
                   </div>
                 </td>
               </tr>
@@ -1135,83 +917,65 @@ const ITClassroomAllocation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-900 via-teal-800 to-emerald-900 p-8">
       <div className="max-w-7xl mx-auto">
-        <header className="bg-gradient-to-r from-slate-800 via-gray-800 to-slate-900 text-white rounded-xl shadow-lg p-8 mb-8 border border-gray-700">
-          <div className="flex items-center gap-4 mb-2">
-            <Building2 className="w-12 h-12 text-blue-300" />
-            <h1 className="text-4xl font-bold tracking-tight">IT Classroom Allocation System</h1>
+        <header className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-2xl shadow-2xl p-8 mb-8 border-4 border-yellow-400 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black opacity-10"></div>
+          <div className="relative z-10 flex items-center gap-4 mb-2">
+            <Building2 className="w-14 h-14 drop-shadow-2xl" />
+            <h1 className="text-5xl font-black tracking-tight drop-shadow-2xl">IT Classroom Allocator Pro</h1>
           </div>
-          <p className="text-gray-300 text-lg font-medium">Professional Classroom Management with Faculty Booking</p>
+          <p className="relative z-10 text-yellow-200 text-xl font-bold drop-shadow-lg">🚀 Multi-Modal Batch-Wise Lab & Theory Allocation + Faculty Booking System</p>
         </header>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-300 mb-8">
-          <div className="flex border-b border-gray-300">
+        <div className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 rounded-2xl shadow-2xl border-4 border-yellow-400 mb-8">
+          <div className="flex border-b-4 border-yellow-400">
             {['input', 'booking', 'allocate', 'results'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 disabled={(tab === 'allocate' && classes.length === 0) || (tab === 'results' && allocations.length === 0)}
-                className={`flex-1 py-5 px-6 font-semibold text-sm transition-all duration-200 border-b-2 ${
+                className={`flex-1 py-6 px-6 font-black text-base transition-all duration-300 border-b-4 transform hover:scale-105 ${
                   activeTab === tab
-                    ? 'text-blue-600 border-blue-600 bg-blue-50'
-                    : 'text-gray-600 border-transparent hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-gradient-to-br from-yellow-300 to-orange-400 text-teal-900 border-yellow-500 shadow-2xl scale-105'
+                    : 'text-white border-transparent hover:bg-white/20 hover:text-yellow-300'
                 } ${((tab === 'allocate' && classes.length === 0) || (tab === 'results' && allocations.length === 0)) ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {tab === 'input' && <><Upload className="w-5 h-5 inline mr-2" />Add Classes</>}
-                {tab === 'booking' && <><Calendar className="w-5 h-5 inline mr-2" />Faculty Booking</>}
-                {tab === 'allocate' && <><CheckCircle className="w-5 h-5 inline mr-2" />Review & Allocate</>}
-                {tab === 'results' && <><TrendingUp className="w-5 h-5 inline mr-2" />View Results</>}
+                {tab === 'input' && <><Upload className="w-6 h-6 inline mr-2" />📚 Add Classes</>}
+                {tab === 'booking' && <><Calendar className="w-6 h-6 inline mr-2" />📅 Faculty Booking</>}
+                {tab === 'allocate' && <><CheckCircle className="w-6 h-6 inline mr-2" />🎯 Review & Allocate</>}
+                {tab === 'results' && <><TrendingUp className="w-6 h-6 inline mr-2" />✨ View Results</>}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-300 p-8">
+        <div className="bg-gradient-to-br from-white via-cyan-50 to-teal-50 rounded-2xl shadow-2xl border-4 border-cyan-400 p-8">
           {activeTab === 'input' && (
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Add Class Timetable</h2>
-              
-              {/* Image Enhancement Settings */}
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-blue-800 font-medium">Image Enhancement Settings</p>
-                    <p className="text-blue-700 text-sm">Improve OCR accuracy for blurry timetable images</p>
-                  </div>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={imageEnhancement}
-                      onChange={(e) => setImageEnhancement(e.target.checked)}
-                      className="w-4 h-4 text-blue-600"
-                    />
-                    <span className="font-medium text-blue-800">Enable Image Enhancement</span>
-                  </label>
-                </div>
-              </div>
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600 mb-6">📚 Add Class Timetable</h2>
               
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Year</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">🎓 Year</label>
                   <select
                     value={currentClass.year}
                     onChange={(e) => setCurrentClass({ ...currentClass, year: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                   >
-                    <option value="1">1st Year</option>
-                    <option value="2">2nd Year</option>
-                    <option value="3">3rd Year</option>
-                    <option value="4">4th Year</option>
+                    <option value="1">1st Year 🟢</option>
+                    <option value="2">2nd Year 🔵</option>
+                    <option value="3">3rd Year 🟣</option>
+                    <option value="4">4th Year 🔴</option>
                   </select>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Section</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">📖 Section</label>
                   <select
                     value={currentClass.section}
                     onChange={(e) => setCurrentClass({ ...currentClass, section: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                   >
                     <option value="A">Section A</option>
                     <option value="B">Section B</option>
@@ -1222,10 +986,10 @@ const ITClassroomAllocation = () => {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Upload Timetable (Image/CSV/Text)</label>
-                <label className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-colors duration-200 shadow-sm hover:shadow-md flex items-center gap-2 w-fit ${isProcessing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                <label className="block text-sm font-black text-teal-900 mb-3">📤 Upload Timetable (Image/CSV/Text)</label>
+                <label className={`bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-6 py-3 rounded-xl font-black text-sm transition-all duration-200 shadow-lg hover:shadow-2xl flex items-center gap-2 w-fit border-4 border-yellow-400 transform hover:scale-105 ${isProcessing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
                   <FileUp className="w-5 h-5" />
-                  {isProcessing ? 'Processing...' : 'Upload Timetable'}
+                  {isProcessing ? '⏳ Processing...' : '🚀 Upload Timetable'}
                   <input
                     type="file"
                     accept=".csv,.txt,image/*"
@@ -1236,22 +1000,22 @@ const ITClassroomAllocation = () => {
                 </label>
                 
                 {processingStatus && (
-                  <div className={`mt-4 border-l-4 p-4 rounded-r-lg ${
+                  <div className={`mt-4 border-l-8 p-4 rounded-r-2xl shadow-lg ${
                     processingStatus.startsWith('✅') 
-                      ? 'bg-green-50 border-green-500 text-green-800'
+                      ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-green-600 text-green-900'
                       : processingStatus.startsWith('❌')
-                      ? 'bg-red-50 border-red-500 text-red-800'
-                      : 'bg-blue-50 border-blue-500 text-blue-800'
+                      ? 'bg-gradient-to-r from-red-100 to-pink-100 border-red-600 text-red-900'
+                      : 'bg-gradient-to-r from-cyan-100 to-teal-100 border-cyan-600 text-cyan-900'
                   }`}>
                     {isProcessing && <Loader className="w-5 h-5 animate-spin inline mr-2" />}
-                    <span className="text-sm font-medium">{processingStatus}</span>
+                    <span className="text-sm font-bold">{processingStatus}</span>
                   </div>
                 )}
                 
                 {currentClass.timetableName && (
-                  <div className="mt-3 bg-green-50 border-l-4 border-green-500 p-3 rounded-r-lg">
-                    <p className="text-sm text-green-800 font-medium">
-                      <strong>Loaded:</strong> {currentClass.timetableName} ({currentClass.timetableFile.length} sessions)
+                  <div className="mt-3 bg-gradient-to-r from-green-100 to-emerald-100 border-l-8 border-green-600 p-3 rounded-r-2xl shadow-lg">
+                    <p className="text-sm text-green-900 font-bold">
+                      <strong>✅ Loaded:</strong> {currentClass.timetableName} ({currentClass.timetableFile.length} sessions)
                     </p>
                   </div>
                 )}
@@ -1259,11 +1023,11 @@ const ITClassroomAllocation = () => {
 
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xl font-semibold text-gray-800">Lab Allocation Rules</h3>
+                  <h3 className="text-xl font-black text-teal-900">🧪 Lab Allocation Rules</h3>
                   <button
                     onClick={() => setShowLabRuleModal(true)}
                     disabled={!currentClass.timetableFile}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-black transition-all shadow-lg transform hover:scale-105 flex items-center gap-2 border-2 border-green-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Plus className="w-4 h-4" />
                     Add Lab Rule
@@ -1271,29 +1035,29 @@ const ITClassroomAllocation = () => {
                 </div>
                 
                 {currentClass.labRules.length === 0 ? (
-                  <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <p className="text-gray-600">No lab rules defined. Add rules to specify how lab sessions should be allocated.</p>
+                  <div className="bg-gradient-to-r from-gray-100 to-gray-50 border-4 border-dashed border-gray-400 rounded-xl p-6 text-center">
+                    <p className="text-gray-700 font-semibold">No lab rules defined. Add rules to specify how lab sessions should be allocated.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {currentClass.labRules.map((rule, idx) => (
-                      <div key={idx} className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex justify-between items-center">
+                      <div key={idx} className="bg-gradient-to-r from-cyan-100 to-teal-100 border-4 border-cyan-400 rounded-xl p-4 flex justify-between items-center shadow-lg">
                         <div>
-                          <p className="font-semibold text-gray-800">{rule.subject}</p>
+                          <p className="font-black text-teal-900">{rule.subject}</p>
                           {rule.labType === 'split' ? (
-                            <p className="text-sm text-gray-700">
+                            <p className="text-sm text-teal-800 font-bold">
                               Batch 1 → {rule.batch1Room} ({rule.strength} students) | 
                               Batch 2 → {rule.batch2Room} ({rule.strength} students)
                             </p>
                           ) : (
-                            <p className="text-sm text-gray-700">
+                            <p className="text-sm text-teal-800 font-bold">
                               Whole Class → {rule.wholeClassRoom} (60 students)
                             </p>
                           )}
                         </div>
                         <button
                           onClick={() => removeLabRule(idx)}
-                          className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded-lg transition-all"
+                          className="text-red-600 hover:text-red-800 p-2 hover:bg-red-100 rounded-lg transition-all"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -1307,7 +1071,7 @@ const ITClassroomAllocation = () => {
                 <button
                   onClick={addClass}
                   disabled={!currentClass.timetableFile}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-black px-6 py-3 rounded-xl transition-all shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border-2 border-cyan-300 transform hover:scale-105"
                 >
                   <Plus className="w-5 h-5" />
                   Add Class to List
@@ -1316,25 +1080,25 @@ const ITClassroomAllocation = () => {
 
               {classes.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Added Classes ({classes.length})</h3>
+                  <h3 className="text-xl font-black text-teal-900 mb-4">✅ Added Classes ({classes.length})</h3>
                   <div className="grid gap-4">
                     {classes.map((cls) => (
-                      <div key={cls.id} className="bg-gray-50 border border-gray-300 rounded-lg p-4 flex justify-between items-center">
+                      <div key={cls.id} className="bg-gradient-to-r from-cyan-100 via-teal-100 to-emerald-100 border-4 border-teal-400 rounded-xl p-4 flex justify-between items-center shadow-lg">
                         <div>
-                          <p className="font-semibold text-gray-800">
-                            {cls.year === '1'} 
-                            {cls.year === '2'} 
-                            {cls.year === '3'} 
-                            {cls.year === '4'} 
+                          <p className="font-black text-teal-900">
+                            {cls.year === '1' && '🟢'} 
+                            {cls.year === '2' && '🔵'} 
+                            {cls.year === '3' && '🟣'} 
+                            {cls.year === '4' && '🔴'} 
                             Year {cls.year} - Section {cls.section}
                           </p>
-                          <p className="text-sm text-gray-700">
+                          <p className="text-sm text-teal-800 font-bold">
                             {cls.timetableFile.length} sessions | {cls.labRules.length} lab rules
                           </p>
                         </div>
                         <button
                           onClick={() => removeClass(cls.id)}
-                          className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded-lg transition-all"
+                          className="text-red-600 hover:text-red-800 p-2 hover:bg-red-100 rounded-lg transition-all"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -1346,79 +1110,78 @@ const ITClassroomAllocation = () => {
             </div>
           )}
 
-          {/* Rest of the component remains the same... */}
           {activeTab === 'booking' && (
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Faculty Room Booking</h2>
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600 mb-6">📅 Faculty Room Booking</h2>
               
-              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6">
-                <p className="text-amber-800 font-medium">
-                  <strong>Note:</strong> Faculty members can book rooms for special events, meetings, or other activities. All bookings will be included in the allocation report.
+              <div className="bg-gradient-to-r from-yellow-100 to-amber-100 border-l-8 border-yellow-600 p-4 rounded-r-2xl mb-6 shadow-lg">
+                <p className="text-yellow-900 font-bold">
+                  ℹ️ <strong>Note:</strong> Faculty members can book rooms for special events, meetings, or other activities. All bookings will be included in the allocation report.
                 </p>
               </div>
 
               <button
                 onClick={() => setShowManualBookingModal(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-colors shadow-sm hover:shadow-md flex items-center gap-2 mb-6"
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-black text-sm transition-all shadow-lg hover:shadow-2xl flex items-center gap-2 border-2 border-emerald-300 transform hover:scale-105 mb-6"
               >
                 <Plus className="w-5 h-5" />
-                New Room Booking
+                📝 New Room Booking
               </button>
 
               {manualBookings.length === 0 ? (
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-700 font-semibold text-lg">No manual bookings yet</p>
+                <div className="bg-gradient-to-r from-gray-100 to-gray-50 border-4 border-dashed border-gray-400 rounded-xl p-8 text-center">
+                  <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-500" />
+                  <p className="text-gray-700 font-bold text-lg">No manual bookings yet</p>
                   <p className="text-gray-600 mt-2">Click "New Room Booking" to add a faculty booking</p>
                 </div>
               ) : (
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Current Bookings ({manualBookings.length})</h3>
+                  <h3 className="text-xl font-black text-teal-900 mb-4">📋 Current Bookings ({manualBookings.length})</h3>
                   <div className="space-y-3">
                     {manualBookings.map((booking) => (
-                      <div key={booking.id} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                      <div key={booking.id} className="bg-gradient-to-r from-emerald-100 to-teal-100 border-4 border-emerald-400 rounded-xl p-4 shadow-lg">
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <User className="w-5 h-5 text-purple-600" />
-                              <p className="font-semibold text-gray-800">{booking.faculty}</p>
+                              <User className="w-5 h-5 text-teal-700" />
+                              <p className="font-black text-teal-900">{booking.faculty}</p>
                             </div>
                             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                               <div>
-                                <span className="font-medium text-gray-700">Room:</span>
-                                <span className="ml-2 text-gray-800">{getRoomSymbol(booking.room)} {booking.room}</span>
+                                <span className="font-bold text-teal-700">Room:</span>
+                                <span className="ml-2 text-teal-900 font-semibold">{getRoomSymbol(booking.room)} {booking.room}</span>
                               </div>
                               <div>
-                                <span className="font-medium text-gray-700">Day:</span>
-                                <span className="ml-2 text-gray-800">{booking.day}</span>
+                                <span className="font-bold text-teal-700">Day:</span>
+                                <span className="ml-2 text-teal-900 font-semibold">{booking.day}</span>
                               </div>
                               <div>
-                                <span className="font-medium text-gray-700">Time:</span>
-                                <span className="ml-2 text-gray-800">{booking.time}</span>
+                                <span className="font-bold text-teal-700">Time:</span>
+                                <span className="ml-2 text-teal-900 font-semibold">{booking.time}</span>
                               </div>
                               <div>
-                                <span className="font-medium text-gray-700">Duration:</span>
-                                <span className="ml-2 text-gray-800">{booking.duration} min</span>
+                                <span className="font-bold text-teal-700">Duration:</span>
+                                <span className="ml-2 text-teal-900 font-semibold">{booking.duration} min</span>
                               </div>
                               {booking.forClass && (
                                 <div>
-                                  <span className="font-medium text-gray-700">For Class:</span>
-                                  <span className="ml-2 text-gray-800">{booking.forClass}</span>
+                                  <span className="font-bold text-teal-700">For Class:</span>
+                                  <span className="ml-2 text-teal-900 font-semibold">{booking.forClass}</span>
                                 </div>
                               )}
                               <div>
-                                <span className="font-medium text-gray-700">Booked:</span>
-                                <span className="ml-2 text-gray-800">{booking.bookedAt}</span>
+                                <span className="font-bold text-teal-700">Booked:</span>
+                                <span className="ml-2 text-teal-900 font-semibold">{booking.bookedAt}</span>
                               </div>
                             </div>
-                            <div className="mt-2 bg-white rounded border border-gray-200 p-2">
-                              <span className="font-medium text-gray-700">Reason:</span>
-                              <span className="ml-2 text-gray-800">{booking.reason}</span>
+                            <div className="mt-2 bg-white rounded-lg p-2 border-2 border-teal-300">
+                              <span className="font-bold text-teal-700">Reason:</span>
+                              <span className="ml-2 text-teal-900 font-semibold">{booking.reason}</span>
                             </div>
                           </div>
                           <button
                             onClick={() => removeManualBooking(booking.id)}
-                            className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded-lg transition-all ml-4"
+                            className="text-red-600 hover:text-red-800 p-2 hover:bg-red-100 rounded-lg transition-all ml-4"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -1433,27 +1196,27 @@ const ITClassroomAllocation = () => {
 
           {activeTab === 'allocate' && (
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Review & Allocate</h2>
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600 mb-6">🎯 Review & Allocate</h2>
               
-              <div className="bg-green-50 border-l-4 border-green-500 text-green-800 p-4 rounded-r-lg mb-6">
-                <p className="font-medium">
-                  <strong>{classes.length} classes</strong> with <strong>{classes.reduce((sum, c) => sum + c.timetableFile.length, 0)} total sessions</strong> + <strong>{manualBookings.length} faculty bookings</strong> ready for allocation
+              <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-l-8 border-green-600 text-green-900 p-4 rounded-r-2xl mb-6 shadow-lg">
+                <p className="font-bold">
+                  ✅ <strong>{classes.length} classes</strong> with <strong>{classes.reduce((sum, c) => sum + c.timetableFile.length, 0)} total sessions</strong> + <strong>{manualBookings.length} faculty bookings</strong> ready for allocation
                 </p>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Available Rooms:</h3>
+                <h3 className="text-xl font-black text-teal-900 mb-4">🏢 Available Rooms:</h3>
                 <div className="grid grid-cols-3 gap-4">
                   {classrooms.map(room => (
-                    <div key={room.id} className="border border-gray-300 rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors shadow-sm">
+                    <div key={room.id} className="border-4 border-cyan-400 rounded-xl p-4 bg-gradient-to-br from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-2xl">{room.symbol}</span>
-                        <div className="font-semibold text-gray-800">{room.id}</div>
+                        <div className="font-black text-teal-900">{room.id}</div>
                       </div>
-                      <div className="text-sm text-gray-700">
+                      <div className="text-sm text-teal-700 font-bold">
                         Capacity: {room.capacity} | Type: {room.type}
                       </div>
-                      <div className="text-xs text-gray-600 mt-1">
+                      <div className="text-xs text-teal-600 mt-1 font-semibold">
                         {room.year === 'all' ? 'All Years' : `Year ${room.year}`}
                       </div>
                     </div>
@@ -1463,9 +1226,9 @@ const ITClassroomAllocation = () => {
 
               <button
                 onClick={allocateRooms}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold text-base px-8 py-4 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black text-base px-8 py-4 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl border-4 border-green-300 transform hover:scale-105"
               >
-                Run Allocation Algorithm
+                🚀 Run Allocation Algorithm
               </button>
             </div>
           )}
@@ -1473,63 +1236,63 @@ const ITClassroomAllocation = () => {
           {activeTab === 'results' && (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-800">Allocation Results</h2>
+                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600">✨ Allocation Results</h2>
                 <button
                   onClick={downloadReport}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-colors duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 shadow-lg hover:shadow-2xl flex items-center gap-2 border-2 border-green-300 transform hover:scale-105"
                 >
                   <Download className="w-5 h-5" />
-                  Download CSV Report
+                  📊 Download CSV Report
                 </button>
               </div>
 
               {analytics && (
                 <div className="grid grid-cols-5 gap-4 mb-6">
-                  <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-sm">
-                    <Users className="w-8 h-8 mb-3" />
-                    <div className="text-3xl font-bold mb-1">{analytics.totalAllocations}</div>
-                    <div className="text-sm opacity-90">Total Allocations</div>
+                  <div className="bg-gradient-to-br from-pink-500 via-red-500 to-orange-500 text-white p-6 rounded-2xl shadow-2xl border-4 border-yellow-300 transform hover:scale-105 transition-transform">
+                    <Users className="w-10 h-10 mb-3 drop-shadow-lg" />
+                    <div className="text-4xl font-black mb-1 drop-shadow-lg">{analytics.totalAllocations}</div>
+                    <div className="text-sm font-bold opacity-90">Total Allocations</div>
                   </div>
-                  <div className="bg-gradient-to-br from-green-600 to-green-700 text-white p-6 rounded-lg shadow-sm">
-                    <Building2 className="w-8 h-8 mb-3" />
-                    <div className="text-3xl font-bold mb-1">{analytics.roomsUsed}/{analytics.totalRooms}</div>
-                    <div className="text-sm opacity-90">Rooms Used</div>
+                  <div className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white p-6 rounded-2xl shadow-2xl border-4 border-yellow-300 transform hover:scale-105 transition-transform">
+                    <Building2 className="w-10 h-10 mb-3 drop-shadow-lg" />
+                    <div className="text-4xl font-black mb-1 drop-shadow-lg">{analytics.roomsUsed}/{analytics.totalRooms}</div>
+                    <div className="text-sm font-bold opacity-90">Rooms Used</div>
                   </div>
-                  <div className="bg-gradient-to-br from-gray-600 to-gray-700 text-white p-6 rounded-lg shadow-sm">
-                    <CheckCircle className="w-8 h-8 mb-3" />
-                    <div className="text-3xl font-bold mb-1">{analytics.freeRooms}</div>
-                    <div className="text-sm opacity-90">Free Rooms</div>
+                  <div className="bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 text-white p-6 rounded-2xl shadow-2xl border-4 border-yellow-300 transform hover:scale-105 transition-transform">
+                    <CheckCircle className="w-10 h-10 mb-3 drop-shadow-lg" />
+                    <div className="text-4xl font-black mb-1 drop-shadow-lg">{analytics.freeRooms}</div>
+                    <div className="text-sm font-bold opacity-90">Free Rooms</div>
                   </div>
-                  <div className="bg-gradient-to-br from-purple-600 to-purple-700 text-white p-6 rounded-lg shadow-sm">
-                    <TrendingUp className="w-8 h-8 mb-3" />
-                    <div className="text-3xl font-bold mb-1">{analytics.utilizationRate}%</div>
-                    <div className="text-sm opacity-90">Avg Utilization</div>
+                  <div className="bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-500 text-white p-6 rounded-2xl shadow-2xl border-4 border-yellow-300 transform hover:scale-105 transition-transform">
+                    <TrendingUp className="w-10 h-10 mb-3 drop-shadow-lg" />
+                    <div className="text-4xl font-black mb-1 drop-shadow-lg">{analytics.utilizationRate}%</div>
+                    <div className="text-sm font-bold opacity-90">Avg Utilization</div>
                   </div>
-                  <div className="bg-gradient-to-br from-red-600 to-red-700 text-white p-6 rounded-lg shadow-sm">
-                    <AlertCircle className="w-8 h-8 mb-3" />
-                    <div className="text-3xl font-bold mb-1">{conflicts.length}</div>
-                    <div className="text-sm opacity-90">Conflicts</div>
+                  <div className="bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-500 text-white p-6 rounded-2xl shadow-2xl border-4 border-yellow-300 transform hover:scale-105 transition-transform">
+                    <AlertCircle className="w-10 h-10 mb-3 drop-shadow-lg" />
+                    <div className="text-4xl font-black mb-1 drop-shadow-lg">{conflicts.length}</div>
+                    <div className="text-sm font-bold opacity-90">Conflicts</div>
                   </div>
                 </div>
               )}
 
-              <div className="bg-gray-800 rounded-lg p-4 mb-6 border border-gray-700">
+              <div className="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-xl p-4 mb-6 border-2 border-yellow-400 shadow-lg">
                 <div className="flex gap-3 items-center flex-wrap">
-                  <span className="text-white font-semibold">View Mode:</span>
+                  <span className="text-white font-black">View Mode:</span>
                   <div className="flex gap-2">
                     {['table', 'calendar', 'availability'].map(mode => (
                       <button
                         key={mode}
                         onClick={() => setViewMode(mode)}
-                        className={`px-4 py-2 rounded font-semibold text-sm transition-all ${
+                        className={`px-4 py-2 rounded-lg font-black text-sm transition-all transform hover:scale-105 ${
                           viewMode === mode
-                            ? 'bg-white text-gray-800 shadow-sm'
-                            : 'bg-gray-700 text-white hover:bg-gray-600'
+                            ? 'bg-yellow-400 text-teal-900 shadow-lg scale-105'
+                            : 'bg-white/20 text-white hover:bg-white/30'
                         }`}
                       >
-                        {mode === 'table' && 'Table'}
-                        {mode === 'calendar' && 'Calendar'}
-                        {mode === 'availability' && 'Room Availability'}
+                        {mode === 'table' && '📋 Table'}
+                        {mode === 'calendar' && '📅 Calendar'}
+                        {mode === 'availability' && '🔍 Room Availability'}
                       </button>
                     ))}
                   </div>
@@ -1538,19 +1301,19 @@ const ITClassroomAllocation = () => {
                     <select
                       value={filterYear}
                       onChange={(e) => setFilterYear(e.target.value)}
-                      className="px-3 py-2 rounded font-medium text-sm bg-white text-gray-800 border border-gray-300"
+                      className="px-3 py-2 rounded-lg font-bold text-sm bg-white/90 text-teal-900 border-2 border-yellow-300"
                     >
                       <option value="all">All Years</option>
-                      <option value="1">Year 1</option>
-                      <option value="2">Year 2</option>
-                      <option value="3">Year 3</option>
-                      <option value="4">Year 4</option>
+                      <option value="1">Year 1 🟢</option>
+                      <option value="2">Year 2 🔵</option>
+                      <option value="3">Year 3 🟣</option>
+                      <option value="4">Year 4 🔴</option>
                     </select>
                     
                     <select
                       value={filterDay}
                       onChange={(e) => setFilterDay(e.target.value)}
-                      className="px-3 py-2 rounded font-medium text-sm bg-white text-gray-800 border border-gray-300"
+                      className="px-3 py-2 rounded-lg font-bold text-sm bg-white/90 text-teal-900 border-2 border-yellow-300"
                     >
                       <option value="all">All Days</option>
                       <option value="Monday">Monday</option>
@@ -1562,10 +1325,10 @@ const ITClassroomAllocation = () => {
                     
                     <input
                       type="text"
-                      placeholder="Search..."
+                      placeholder="🔍 Search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="px-3 py-2 rounded font-medium text-sm bg-white text-gray-800 border border-gray-300 w-40"
+                      className="px-3 py-2 rounded-lg font-bold text-sm bg-white/90 text-teal-900 border-2 border-yellow-300 w-40"
                     />
                   </div>
                 </div>
@@ -1577,29 +1340,29 @@ const ITClassroomAllocation = () => {
 
               {conflicts.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-500" />
+                  <h3 className="text-xl font-black text-teal-900 mb-4 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5 text-amber-600" />
                     Conflicts Detected ({conflicts.length})
                   </h3>
-                  <div className="border border-red-200 rounded-lg bg-red-50 overflow-hidden">
+                  <div className="border-4 border-amber-200 rounded-xl bg-amber-50 overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead className="bg-red-100 border-b border-red-200">
+                      <thead className="bg-amber-100 border-b border-amber-200">
                         <tr>
-                          <th className="p-3 text-left font-semibold text-red-900">Subject</th>
-                          <th className="p-3 text-left font-semibold text-red-900">Year-Sec</th>
-                          <th className="p-3 text-left font-semibold text-red-900">Students</th>
-                          <th className="p-3 text-left font-semibold text-red-900">Day & Time</th>
-                          <th className="p-3 text-left font-semibold text-red-900">Reason</th>
+                          <th className="p-3 text-left font-black text-amber-900">Subject</th>
+                          <th className="p-3 text-left font-black text-amber-900">Year-Sec</th>
+                          <th className="p-3 text-left font-black text-amber-900">Students</th>
+                          <th className="p-3 text-left font-black text-amber-900">Day & Time</th>
+                          <th className="p-3 text-left font-black text-amber-900">Reason</th>
                         </tr>
                       </thead>
                       <tbody>
                         {conflicts.map((conf, idx) => (
-                          <tr key={idx} className="border-t border-red-200">
-                            <td className="p-3 text-red-800">{conf.subject}</td>
-                            <td className="p-3 text-red-700">{conf.year}-{conf.section}</td>
-                            <td className="p-3 text-red-700">{conf.students}</td>
-                            <td className="p-3 text-red-700">{conf.day} {conf.time}</td>
-                            <td className="p-3 text-red-800 font-medium">{conf.reason}</td>
+                          <tr key={idx} className="border-t border-amber-200">
+                            <td className="p-3 text-amber-900">{conf.subject}</td>
+                            <td className="p-3 text-amber-800">{conf.year}-{conf.section}</td>
+                            <td className="p-3 text-amber-800">{conf.students}</td>
+                            <td className="p-3 text-amber-800">{conf.day} {conf.time}</td>
+                            <td className="p-3 text-amber-900 font-black">{conf.reason}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1615,24 +1378,24 @@ const ITClassroomAllocation = () => {
       {/* Lab Rule Modal */}
       {showLabRuleModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-300">
-            <div className="p-6 border-b border-gray-300 flex justify-between items-center bg-gray-800 text-white">
-              <h3 className="text-xl font-semibold">Add Lab Allocation Rule</h3>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-4 border-cyan-400">
+            <div className="p-6 border-b-4 border-cyan-400 flex justify-between items-center bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
+              <h3 className="text-2xl font-black">Add Lab Allocation Rule</h3>
               <button
                 onClick={() => setShowLabRuleModal(false)}
-                className="text-white hover:text-gray-300"
+                className="text-white hover:text-yellow-300"
               >
-                <X className="w-6 h-6" />
+                <X className="w-8 h-8" />
               </button>
             </div>
             
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Lab Subject</label>
+                <label className="block text-sm font-black text-teal-900 mb-2">Lab Subject</label>
                 <select
                   value={currentLabRule.subject}
                   onChange={(e) => setCurrentLabRule({ ...currentLabRule, subject: e.target.value })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                 >
                   <option value="">Select a lab subject...</option>
                   {labSubjects.map(subject => (
@@ -1642,7 +1405,7 @@ const ITClassroomAllocation = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Lab Type</label>
+                <label className="block text-sm font-black text-teal-900 mb-2">Lab Type</label>
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1650,9 +1413,9 @@ const ITClassroomAllocation = () => {
                       value="split"
                       checked={currentLabRule.labType === 'split'}
                       onChange={(e) => setCurrentLabRule({ ...currentLabRule, labType: e.target.value })}
-                      className="w-4 h-4 text-blue-600"
+                      className="w-5 h-5 text-cyan-600"
                     />
-                    <span className="font-medium text-gray-700">Split Batches (2 labs × 30 students)</span>
+                    <span className="font-bold text-teal-900">Split Batches (2 labs × 30 students)</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1660,9 +1423,9 @@ const ITClassroomAllocation = () => {
                       value="whole"
                       checked={currentLabRule.labType === 'whole'}
                       onChange={(e) => setCurrentLabRule({ ...currentLabRule, labType: e.target.value })}
-                      className="w-4 h-4 text-blue-600"
+                      className="w-5 h-5 text-cyan-600"
                     />
-                    <span className="font-medium text-gray-700">Whole Class (60 students)</span>
+                    <span className="font-bold text-teal-900">Whole Class (60 students)</span>
                   </label>
                 </div>
               </div>
@@ -1670,11 +1433,11 @@ const ITClassroomAllocation = () => {
               {currentLabRule.labType === 'split' ? (
                 <>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Batch 1 Room</label>
+                    <label className="block text-sm font-black text-teal-900 mb-2">Batch 1 Room</label>
                     <select
                       value={currentLabRule.batch1Room}
                       onChange={(e) => setCurrentLabRule({ ...currentLabRule, batch1Room: e.target.value })}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                      className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                     >
                       <option value="">Select room for Batch 1...</option>
                       {classrooms.filter(r => r.type === 'IT_LAB' || r.type === 'THEORY').map(room => (
@@ -1686,11 +1449,11 @@ const ITClassroomAllocation = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Batch 2 Room</label>
+                    <label className="block text-sm font-black text-teal-900 mb-2">Batch 2 Room</label>
                     <select
                       value={currentLabRule.batch2Room}
                       onChange={(e) => setCurrentLabRule({ ...currentLabRule, batch2Room: e.target.value })}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                      className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                     >
                       <option value="">Select room for Batch 2...</option>
                       {classrooms.filter(r => r.type === 'IT_LAB' || r.type === 'THEORY').map(room => (
@@ -1702,12 +1465,12 @@ const ITClassroomAllocation = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Students per Batch</label>
+                    <label className="block text-sm font-black text-teal-900 mb-2">Students per Batch</label>
                     <input
                       type="number"
                       value={currentLabRule.strength}
                       onChange={(e) => setCurrentLabRule({ ...currentLabRule, strength: parseInt(e.target.value) })}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                      className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                       min="1"
                       max="40"
                     />
@@ -1715,11 +1478,11 @@ const ITClassroomAllocation = () => {
                 </>
               ) : (
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Whole Class Room</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">Whole Class Room</label>
                   <select
                     value={currentLabRule.wholeClassRoom}
                     onChange={(e) => setCurrentLabRule({ ...currentLabRule, wholeClassRoom: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-cyan-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-cyan-50 to-teal-50"
                   >
                     <option value="">Select room for whole class...</option>
                     {classrooms.filter(r => r.capacity >= 60).map(room => (
@@ -1731,29 +1494,26 @@ const ITClassroomAllocation = () => {
                 </div>
               )}
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                <p className="text-sm text-blue-800">
-                  <strong>Lab Room Mappings:</strong><br/>
-                  • NP Lab → Open Source Lab<br/>
-                  • FSWD Lab → Software Engineering Lab<br/>
-                  • OOPJ Lab → Software Engineering Lab<br/>
-                  • FAIML Lab → Internet Technology Lab<br/>
-                  • DSA Lab → Database Lab<br/>
-                  • MP Lab → Classrooms (Year-based: 1st→1101, 2nd→1201, 3rd/4th→1301)
+              <div className="bg-gradient-to-r from-cyan-100 to-teal-100 border-l-8 border-cyan-600 p-4 rounded-r-2xl">
+                <p className="text-sm text-teal-900 font-bold">
+                  <strong>Examples:</strong><br/>
+                  • NP Lab: Split → Batch 1 in Open Source Lab, Batch 2 in Internet Tech Lab<br/>
+                  • FSWD Lab: Split → Batch 1 in Software Eng Lab, Batch 2 in Database Lab<br/>
+                  • Mini Project: Whole Class → In regular classroom (1201, 1202, etc.)
                 </p>
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-300 flex gap-3 justify-end bg-gray-50">
+            <div className="p-6 border-t-4 border-cyan-400 flex gap-3 justify-end bg-gradient-to-r from-teal-50 to-cyan-50">
               <button
                 onClick={() => setShowLabRuleModal(false)}
-                className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors"
+                className="px-6 py-3 border-4 border-cyan-400 rounded-xl text-teal-900 hover:bg-cyan-100 font-black transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={addLabRule}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-sm hover:shadow-md"
+                className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 font-black transition-all shadow-lg hover:shadow-xl"
               >
                 Add Rule
               </button>
@@ -1765,24 +1525,24 @@ const ITClassroomAllocation = () => {
       {/* Manual Booking Modal */}
       {showManualBookingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-300">
-            <div className="p-6 border-b border-gray-300 flex justify-between items-center bg-gray-800 text-white">
-              <h3 className="text-xl font-semibold">New Room Booking</h3>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-4 border-emerald-400">
+            <div className="p-6 border-b-4 border-emerald-400 flex justify-between items-center bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
+              <h3 className="text-2xl font-black">New Room Booking</h3>
               <button
                 onClick={() => setShowManualBookingModal(false)}
-                className="text-white hover:text-gray-300"
+                className="text-white hover:text-yellow-300"
               >
-                <X className="w-6 h-6" />
+                <X className="w-8 h-8" />
               </button>
             </div>
             
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Faculty Member</label>
+                <label className="block text-sm font-black text-teal-900 mb-2">Faculty Member</label>
                 <select
                   value={currentBooking.faculty}
                   onChange={(e) => setCurrentBooking({ ...currentBooking, faculty: e.target.value })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50"
                 >
                   <option value="">Select faculty member...</option>
                   {facultyList.map(faculty => (
@@ -1792,11 +1552,11 @@ const ITClassroomAllocation = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Room</label>
+                <label className="block text-sm font-black text-teal-900 mb-2">Room</label>
                 <select
                   value={currentBooking.room}
                   onChange={(e) => setCurrentBooking({ ...currentBooking, room: e.target.value })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50"
                 >
                   <option value="">Select room...</option>
                   {classrooms.map(room => (
@@ -1809,11 +1569,11 @@ const ITClassroomAllocation = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Day</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">Day</label>
                   <select
                     value={currentBooking.day}
                     onChange={(e) => setCurrentBooking({ ...currentBooking, day: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50"
                   >
                     <option value="Monday">Monday</option>
                     <option value="Tuesday">Tuesday</option>
@@ -1824,11 +1584,11 @@ const ITClassroomAllocation = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Time</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">Time</label>
                   <select
                     value={currentBooking.time}
                     onChange={(e) => setCurrentBooking({ ...currentBooking, time: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50"
                   >
                     {timeSlots.map(slot => (
                       <option key={slot.time} value={slot.time}>{slot.label}</option>
@@ -1839,12 +1599,12 @@ const ITClassroomAllocation = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Duration (minutes)</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">Duration (minutes)</label>
                   <input
                     type="number"
                     value={currentBooking.duration}
                     onChange={(e) => setCurrentBooking({ ...currentBooking, duration: parseInt(e.target.value) })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50"
                     min="15"
                     max="180"
                     step="15"
@@ -1852,39 +1612,39 @@ const ITClassroomAllocation = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">For Class (Optional)</label>
+                  <label className="block text-sm font-black text-teal-900 mb-2">For Class (Optional)</label>
                   <input
                     type="text"
                     value={currentBooking.forClass}
                     onChange={(e) => setCurrentBooking({ ...currentBooking, forClass: e.target.value })}
                     placeholder="e.g., Year 1 - Section A"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Reason for Booking</label>
+                <label className="block text-sm font-black text-teal-900 mb-2">Reason for Booking</label>
                 <textarea
                   value={currentBooking.reason}
                   onChange={(e) => setCurrentBooking({ ...currentBooking, reason: e.target.value })}
                   placeholder="Please describe the purpose of this booking..."
                   rows="3"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white resize-none"
+                  className="w-full p-3 border-4 border-emerald-400 rounded-xl focus:border-teal-500 focus:ring-4 focus:ring-teal-300 font-bold text-teal-900 bg-gradient-to-r from-emerald-50 to-teal-50 resize-none"
                 />
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-300 flex gap-3 justify-end bg-gray-50">
+            <div className="p-6 border-t-4 border-emerald-400 flex gap-3 justify-end bg-gradient-to-r from-emerald-50 to-teal-50">
               <button
                 onClick={() => setShowManualBookingModal(false)}
-                className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors"
+                className="px-6 py-3 border-4 border-emerald-400 rounded-xl text-teal-900 hover:bg-emerald-100 font-black transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={addManualBooking}
-                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition-colors shadow-sm hover:shadow-md"
+                className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 font-black transition-all shadow-lg hover:shadow-xl"
               >
                 Book Room
               </button>
