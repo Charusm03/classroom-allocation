@@ -1,9 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 1rem;
+  text-align: left;
 }
+
+/* Improved spacing and table responsiveness */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.table-collapsed .table-container {
+  max-height: 0;
+  border: none;
+  overflow: hidden;
+}
+
+/* Better table styling */
+table {
+  min-width: 800px;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
+  z-index: 10;
+}
+
+/* Improved form spacing */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* Better modal positioning */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* Enhanced button spacing */
+.btn-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Improved card spacing */
+.card {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Better responsive design */
+@media (max-width: 768px) {
+  #root {
+    padding: 0.5rem;
+  }
+  
+  .table-container {
+    max-height: 500px;
+  }
+  
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+}
+
+/* Custom scrollbar for better UX */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Enhanced focus states */
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Improved color coding for periods */
+.period-1 { background-color: #dcfce7; border-color: #16a34a; }
+.period-2 { background-color: #fef9c3; border-color: #ca8a04; }
+.period-3 { background-color: #fed7aa; border-color: #ea580c; }
+.period-4 { background-color: #e9d5ff; border-color: #7c3aed; }
+.period-lab { background-color: #dbeafe; border-color: #2563eb; }
 
 .logo {
   height: 6em;

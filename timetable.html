@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fillable IT Department Timetable Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            background: #f0f4f8;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border: 3px solid #1e40af;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #1e40af;
+            padding-bottom: 15px;
+        }
+        
+        .college-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 5px;
+        }
+        
+        .dept-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-top: 10px;
+        }
+        
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f0f9ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 8px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #1e40af;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .info-input {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #1e40af;
+            padding: 4px 8px;
+            font-size: 14px;
+            background: transparent;
+            outline: none;
+        }
+        
+        .info-input:focus {
+            border-bottom: 2px solid #1e3a8a;
+            background: #fff;
+        }
+        
+        .timetable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .timetable th, .timetable td {
+            border: 2px solid #333;
+            padding: 8px 5px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .timetable th {
+            background: #1e40af;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .time-header {
+            background: #1e40af !important;
+            color: white !important;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+        
+        .period-number {
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        .day-cell {
+            background: #dbeafe;
+            font-weight: bold;
+            font-size: 14px;
+            color: #1e40af;
+            width: 70px;
+        }
+        
+        .break-cell {
+            background: #fef3c7;
+            font-weight: bold;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 11px;
+            width: 40px;
+        }
+        
+        .lunch-cell {
+            background: #fed7aa;
+            font-weight: bold;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 11px;
+            width: 40px;
+        }
+        
+        .input-cell {
+            height: 65px;
+            background: white;
+            padding: 4px;
+            width: 120px;
+        }
+        
+        .cell-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            height: 100%;
+        }
+        
+        .subject-input, .faculty-input, .room-input {
+            border: none;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 2px 4px;
+            font-size: 10px;
+            text-align: center;
+            outline: none;
+            background: transparent;
+            width: 100%;
+        }
+        
+        .subject-input {
+            font-weight: 600;
+            color: #1e40af;
+            font-size: 11px;
+        }
+        
+        .faculty-input {
+            color: #475569;
+            font-size: 9px;
+        }
+        
+        .room-input {
+            color: #059669;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        
+        .subject-input:focus, .faculty-input:focus, .room-input:focus {
+            background: #f0f9ff;
+            border-bottom: 1px solid #1e40af;
+        }
+        
+        .room-input::placeholder {
+            color: #059669;
+            opacity: 0.5;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        
+        .legend-title {
+            grid-column: 1 / -1;
+            font-weight: bold;
+            font-size: 15px;
+            color: #1e40af;
+            margin-bottom: 5px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 11px;
+        }
+        
+        .legend-bullet {
+            width: 6px;
+            height: 6px;
+            background: #1e40af;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        
+        .course-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 2px solid #1e40af;
+        }
+        
+        .course-table th {
+            background: #1e40af;
+            color: white;
+            padding: 8px;
+            font-size: 11px;
+            border: 1px solid #1e40af;
+        }
+        
+        .course-table td {
+            border: 1px solid #cbd5e1;
+            padding: 4px;
+            height: 30px;
+        }
+        
+        .course-input {
+            width: 100%;
+            border: none;
+            padding: 4px;
+            font-size: 10px;
+            outline: none;
+            background: transparent;
+            text-align: center;
+        }
+        
+        .course-input:focus {
+            background: #f0f9ff;
+        }
+        
+        .course-header {
+            font-weight: bold;
+            font-size: 14px;
+            color: #1e40af;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #1e40af;
+        }
+        
+        .button-group {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .btn {
+            background: #1e40af;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #1e3a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-clear {
+            background: #dc2626;
+        }
+        
+        .btn-clear:hover {
+            background: #b91c1c;
+        }
+        
+        @media print {
+            body {
+                padding: 10px;
+                background: white;
+            }
+            .container {
+                border: 2px solid #1e40af;
+                padding: 20px;
+                box-shadow: none;
+            }
+            .button-group {
+                display: none;
+            }
+            .info-input, .subject-input, .faculty-input, .course-input {
+                border-bottom: 1px solid #000;
+                background: transparent !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="button-group">
+        <button class="btn btn-clear" onclick="clearAll()">🗑️ Clear All</button>
+        <button class="btn" onclick="window.print()">📥 Print / Save PDF</button>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="college-name">EASWARI ENGINEERING COLLEGE, CHENNAI - 89</div>
+            <div class="dept-name">(Autonomous)</div>
+            <div class="dept-name">DEPARTMENT OF INFORMATION TECHNOLOGY</div>
+            <div class="title">CLASS TIMETABLE</div>
+        </div>
+        
+        <!-- Class Information -->
+        <div class="info-section">
+            <div class="info-item">
+                <span class="info-label">Academic Year:</span>
+                <input type="text" class="info-input" placeholder="2024-2025" id="academicYear">
+            </div>
+            <div class="info-item">
+                <span class="info-label">Year:</span>
+                <input type="text" class="info-input" placeholder="III" id="year">
+            </div>
+            <div class="info-item">
+                <span class="info-label">Section:</span>
+                <input type="text" class="info-input" placeholder="C" id="section">
+            </div>
+            <div class="info-item">
+                <span class="info-label">Semester:</span>
+                <input type="text" class="info-input" placeholder="V" id="semester">
+            </div>
+            <div class="info-item">
+                <span class="info-label">Class Committee:</span>
+                <input type="text" class="info-input" placeholder="Dr. B.CHANDRA" id="chairperson">
+            </div>
+            <div class="info-item">
+                <span class="info-label">Class Coordinator:</span>
+                <input type="text" class="info-input" placeholder="Ms.V.KUMARASUNDARI" id="coordinator">
+            </div>
+            <div class="info-item">
+                <span class="info-label">Class Room:</span>
+                <input type="text" class="info-input" placeholder="1203" id="classroom">
+            </div>
+            <div class="info-item">
+                <span class="info-label">w.e.f.:</span>
+                <input type="text" class="info-input" placeholder="14.07.2025" id="wef">
+            </div>
+        </div>
+        
+        <!-- Timetable -->
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th class="day-cell">DAY</th>
+                    <th class="time-header">
+                        <span class="period-number">1</span>
+                        8:15-9:05<br>(50 min)
+                    </th>
+                    <th class="time-header">
+                        <span class="period-number">2</span>
+                        9:05-9:55<br>(50 min)
+                    </th>
+                    <th class="break-cell">BREAK<br>9:55-10:10</th>
+                    <th class="time-header">
+                        <span class="period-number">3</span>
+                        10:10-11:00<br>(50 min)
+                    </th>
+                    <th class="time-header">
+                        <span class="period-number">4</span>
+                        11:00-11:50<br>(50 min)
+                    </th>
+                    <th class="time-header">
+                        <span class="period-number">5</span>
+                        11:50-12:40<br>(50 min)
+                    </th>
+                    <th class="lunch-cell">LUNCH<br>12:40-1:30</th>
+                    <th class="time-header">
+                        <span class="period-number">6</span>
+                        1:30-2:15<br>(45 min)
+                    </th>
+                    <th class="time-header">
+                        <span class="period-number">7</span>
+                        2:15-3:00<br>(45 min)
+                    </th>
+                    <th class="time-header">
+                        <span class="period-number">8</span>
+                        3:00-3:45<br>(45 min)
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="timetableBody">
+                <!-- Monday -->
+                <tr>
+                    <td class="day-cell">MON</td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="break-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="lunch-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                </tr>
+                <!-- Tuesday -->
+                <tr>
+                    <td class="day-cell">TUES</td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="break-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="lunch-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                </tr>
+                <!-- Wednesday -->
+                <tr>
+                    <td class="day-cell">WED</td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="break-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="lunch-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                </tr>
+                <!-- Thursday -->
+                <tr>
+                    <td class="day-cell">THURS</td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="break-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="lunch-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                </tr>
+                <!-- Friday -->
+                <tr>
+                    <td class="day-cell">FRI</td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="break-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="lunch-cell"></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                    <td class="input-cell"><div class="cell-inputs"><input type="text" class="subject-input" placeholder="Subject"><input type="text" class="faculty-input" placeholder="Faculty"></div></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-title">📝 FILLING INSTRUCTIONS:</div>
+            <div class="legend-item">
+                <span class="legend-bullet"></span>
+                <span><strong>Top field:</strong> Subject name (e.g., Data Structures, Network Programming (L))</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-bullet"></span>
+                <span><strong>Bottom field:</strong> Faculty name (e.g., Dr. Smith, Ms. Johnson)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-bullet"></span>
+                <span><strong>Lab sessions:</strong> Add (L) suffix → "Network Programming (L)"</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-bullet"></span>
+                <span><strong>Split Labs:</strong> Use / between subjects → "NP(L)/FSWD(L)"</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-bullet"></span>
+                <span><strong>Continuous periods:</strong> Write same subject in consecutive cells</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-bullet"></span>
+                <span><strong>Example:</strong> Lab spanning 4 periods = same subject in 4 cells</span>
+            </div>
+        </div>
+        
+        <!-- Course Details Table -->
+        <div class="course-header">COURSE DETAILS:</div>
+        <table class="course-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">COURSE CODE</th>
+                    <th style="width: 250px;">COURSE NAME</th>
+                    <th style="width: 60px;">MNE</th>
+                    <th style="width: 200px;">NAME OF THE FACULTY</th>
+                    <th style="width: 60px;">DEPT</th>
+                    <th style="width: 100px;">Periods as per Curriculum</th>
+                    <th style="width: 100px;">Allotted Periods</th>
+                </tr>
+            </thead>
+            <tbody id="courseTableBody">
+                <!-- 10 rows for course details -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Generate course table rows
+        const courseTableBody = document.getElementById('courseTableBody');
+        for (let i = 0; i < 10; i++) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="course-input" placeholder="Code"></td>
+                <td><input type="text" class="course-input" placeholder="Course Name"></td>
+                <td><input type="text" class="course-input" placeholder=""></td>
+                <td><input type="text" class="course-input" placeholder="Faculty Name"></td>
+                <td><input type="text" class="course-input" placeholder="IT"></td>
+                <td><input type="text" class="course-input" placeholder="3"></td>
+                <td><input type="text" class="course-input" placeholder="4"></td>
+            `;
+            courseTableBody.appendChild(row);
+        }
+
+        // Clear all function
+        function clearAll() {
+            if (confirm('⚠️ Are you sure you want to clear all data? This cannot be undone.')) {
+                // Clear all inputs
+                document.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                });
+            }
+        }
+
+        // Auto-save to localStorage
+        function saveData() {
+            const allInputs = document.querySelectorAll('input');
+            const data = {};
+            allInputs.forEach((input, index) => {
+                data[index] = input.value;
+            });
+            localStorage.setItem('timetableData', JSON.stringify(data));
+        }
+
+        // Load saved data
+        function loadData() {
+            const savedData = localStorage.getItem('timetableData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const allInputs = document.querySelectorAll('input');
+                allInputs.forEach((input, index) => {
+                    if (data[index]) {
+                        input.value = data[index];
+                    }
+                });
+            }
+        }
+
+        // Auto-save on input change
+        document.addEventListener('input', () => {
+            saveData();
+        });
+
+        // Load data on page load
+        window.addEventListener('load', () => {
+            loadData();
+        });
+    </script>
+</body>
+</html>
