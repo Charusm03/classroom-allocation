@@ -1,1088 +1,1028 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Download, AlertCircle, CheckCircle, Building2, Users, TrendingUp, X, Plus, Trash2, Eye, Upload, FileText, Info } from 'lucide-react';
+import { Calendar, Plus, Trash2, AlertCircle, CheckCircle, LayoutGrid, Users, BookOpen, Printer, Save, Clock, Settings, Filter, BarChart2, Upload, FileText, Image as ImageIcon } from 'lucide-react';
+import TimetablePreview from './components/TimetablePreview';
+import UnallocatedView from './components/UnallocatedView';
 
-const ITClassroomAllocation = () => {
-  const [activeTab, setActiveTab] = useState('input');
-  const [classes, setClasses] = useState([]);
+const storage = {
+  get: async (key) => {
+    const val = localStorage.getItem(key);
+    return val ? { value: val } : null;
+  },
+  set: async (key, val) => localStorage.setItem(key, val)
+};
+
+const SmartClassroomSystem = () => {
+  const [activeTab, setActiveTab] = useState('resources');
+  const [timetables, setTimetables] = useState([]);
+  const [facultyBookings, setFacultyBookings] = useState([]);
   const [allocations, setAllocations] = useState([]);
   const [conflicts, setConflicts] = useState([]);
-  const [manualBookings, setManualBookings] = useState([]);
-  const [analytics, setAnalytics] = useState(null);
-  const [selectedClassView, setSelectedClassView] = useState(null);
-  const [processing, setProcessing] = useState(false);
-  
-  const [currentClass, setCurrentClass] = useState({
-    year: '1',
+  const [priorityMode, setPriorityMode] = useState('student');
+  const [showBooking, setShowBooking] = useState(false);
+  const [showConflictResolver, setShowConflictResolver] = useState(null);
+  const [resultsFilter, setResultsFilter] = useState({ day: 'All', time: 'All' });
+
+  // Phase 5: External Timetables State
+  const [externalTimetables, setExternalTimetables] = useState([]);
+  const [uploadRoom, setUploadRoom] = useState('');
+
+  const [classrooms, setClassrooms] = useState([
+    { name: '1201', type: 'Classroom' },
+    { name: '1202', type: 'Classroom' },
+    { name: '1203', type: 'Classroom' },
+    { name: '1204', type: 'Classroom' },
+    { name: '1301', type: 'Classroom' },
+    { name: '1302', type: 'Classroom' },
+    { name: 'SE Lab', type: 'Lab' },
+    { name: 'OS Lab', type: 'Lab' },
+    { name: 'DB Lab', type: 'Lab' },
+    { name: 'IT Lab', type: 'Lab' },
+    { name: 'Project Lab', type: 'Lab' }
+  ]);
+  const [newResource, setNewResource] = useState({ name: '', type: 'Classroom' });
+
+  const [currentTT, setCurrentTT] = useState({
+    regulation: 'R 2023 V1.0',
+    chairperson: 'Dr.K.SUNDAR',
+    coordinator: 'P.SIVA SAKTHI, Asst. Prof., IT',
+    classroom: '1201',
+    effectiveDate: '14.07.2025',
+    period: 'June 2025 - Dec 2025',
+    academicYear: '2025-2026',
+    semester: '5',
     section: 'A',
-    semester: '1',
-    academicYear: '2024-2025',
-    timetableData: {},
-    processedSchedule: null
+    yearLevel: '3',
+    department: 'INFORMATION TECHNOLOGY',
+    courses: [],
+    schedule: {}
   });
-  
-  const [showManualBookingModal, setShowManualBookingModal] = useState(false);
+
   const [currentBooking, setCurrentBooking] = useState({
     faculty: '',
-    room: '',
-    day: 'Monday',
-    time: '08:15',
+    date: '',
+    day: 'MON',
+    time: '8:15-9:05',
     duration: 50,
+    classroom: '',
     reason: '',
-    forClass: ''
+    yearLevel: '3',
+    priority: 'medium'
   });
 
-  const [classrooms] = useState([
-    { id: '1101', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1101' },
-    { id: '1102', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1102' },
-    { id: '1103', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1103' },
-    { id: '1104', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1104' },
-    { id: '1105', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1105' },
-    { id: '1106', capacity: 60, type: 'THEORY', building: 'IT Block', year: '1', name: 'Room 1106' },
-    { id: '1201', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1201' },
-    { id: '1202', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1202' },
-    { id: '1203', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1203' },
-    { id: '1204', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1204' },
-    { id: '1301', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1301' },
-    { id: '1302', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1302' },
-    { id: '1303', capacity: 70, type: 'THEORY', building: 'IT Block', year: '2,3', name: 'Room 1303' },
-    { id: 'LAB-1', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', name: 'Lab 1' },
-    { id: 'LAB-2', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', name: 'Lab 2' },
-    { id: 'LAB-3', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', name: 'Lab 3' },
-    { id: 'LAB-4', capacity: 30, type: 'IT_LAB', building: 'IT Block', year: 'all', name: 'Lab 4' }
-  ]);
-
-  const [facultyList] = useState([
-    'Dr. N. ANANTHI - Professor',
-    'Dr. M. MOHANA - Associate Professor',
-    'Dr. S. GNANAPRIYA - Assistant Professor',
-    'Dr. M. HEMA - Assistant Professor',
-    'Dr. B. CHANDRA - Assistant Professor',
-    'Dr. DURAI ARUMUGAM S.S.L. - Assistant Professor',
-    'Mr. K.RAVINDRAN - Assistant Professor',
-    'Dr. K. JOHNY ELMA - Assistant Professor',
-    'Mrs. T. SARASWATHI - Assistant Professor',
-    'Dr. S. PRAVEENA RACHEL KAMALA - Assistant Professor',
-    'Mrs. S. ANUSHA - Assistant Professor',
-    'Dr. K.SUNDAR - Assistant Professor',
-    'Mrs.P. SIVASAKTHI - Assistant Professor',
-    'Mrs.S.SHEREEN PRISCILA - Assistant Professor',
-    'Mrs.S. SARANYA - Assistant Professor',
-    'Mrs.K. SANTHI - Assistant Professor',
-    'Dr.M.A. GUNAVATHIE - Assistant Professor',
-    'Dr.G.MARIA KALAVATHY - Professor',
-    'Mrs.T.P.DAYANA PETER - Assistant Professor',
-    'Mrs.P.ABERNA (ML) - Assistant Professor',
-    'Mrs.M.SWATHI - Assistant Professor',
-    'Mrs.V.KUMARASUNDARI - Assistant Professor',
-    'Mrs.V.KAVITHA - Assistant Professor',
-    'Mrs.G.S. DEVI LAKSHMI - Assistant Professor',
-    'Mrs.B.PRIYADARSHINI - Assistant Professor',
-    'Mrs.K.SUDHA - Assistant Professor',
-    'Ms.M.MADHUMITHA - Assistant Professor',
-    'Mrs.S. SUGANYA - Assistant Professor',
-    'Dr. S. BERLIN SHAHEEMA - Assistant Professor'
-  ]);
-
   const timeSlots = [
-    { time: '08:15', duration: 50, label: '8:15 AM' },
-    { time: '09:05', duration: 50, label: '9:05 AM' },
-    { time: '10:10', duration: 50, label: '10:10 AM' },
-    { time: '11:00', duration: 50, label: '11:00 AM' },
-    { time: '11:50', duration: 50, label: '11:50 AM' },
-    { time: '13:30', duration: 45, label: '1:30 PM' },
-    { time: '14:15', duration: 45, label: '2:15 PM' },
-    { time: '15:00', duration: 45, label: '3:00 PM' }
+    { p: 1, t: '8:15-9:05' },
+    { p: 2, t: '9:05-9:55' },
+    { p: 3, t: '10:10-11:00' },
+    { p: 4, t: '11:00-11:50' },
+    { p: 5, t: '11:50-12:40' },
+    { p: 6, t: '1:30-2:15' },
+    { p: 7, t: '2:15-3:00' },
+    { p: 8, t: '3:00-3:45' }
   ];
 
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const bookingTimeSlots = [
+    ...timeSlots,
+    { p: 'Spl', t: '16:00-17:00' }
+  ];
+
+  const days = ['MON', 'TUES', 'WED', 'THURS', 'FRI', 'SAT'];
 
   useEffect(() => {
-    loadFromStorage();
-  }, []);
+    const loadData = async () => {
+      try {
+        const ttData = await storage.get('timetables');
+        const bookData = await storage.get('bookings');
+        const allocData = await storage.get('allocations');
+        const roomData = await storage.get('classrooms');
+        const extData = await storage.get('externalTimetables');
 
-  const loadFromStorage = async () => {
-    try {
-      const classesData = await window.storage.get('classes-data');
-      const allocsData = await window.storage.get('allocations-data');
-      const bookingsData = await window.storage.get('bookings-data');
-      
-      if (classesData) setClasses(JSON.parse(classesData.value));
-      if (allocsData) setAllocations(JSON.parse(allocsData.value));
-      if (bookingsData) setManualBookings(JSON.parse(bookingsData.value));
-    } catch (err) {
-      console.log('No saved data');
-    }
-  };
-
-  const saveToStorage = async (type, data) => {
-    try {
-      await window.storage.set(`${type}-data`, JSON.stringify(data));
-    } catch (err) {
-      console.error('Save failed:', err);
-    }
-  };
-
-  const timeToMinutes = (time) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
-
-  const timeOverlap = (time1, dur1, time2, dur2) => {
-    const start1 = timeToMinutes(time1);
-    const end1 = start1 + dur1;
-    const start2 = timeToMinutes(time2);
-    const end2 = start2 + dur2;
-    return (start1 < end2 && end1 > start2);
-  };
-
-  const initializeTimetableData = () => {
-    const data = {};
-    days.forEach(day => {
-      data[day] = timeSlots.map(slot => ({
-        time: slot.time,
-        subject: '',
-        faculty: '',
-        duration: slot.duration,
-        type: 'THEORY'
-      }));
-    });
-    return data;
-  };
-
-  useEffect(() => {
-    if (Object.keys(currentClass.timetableData).length === 0) {
-      setCurrentClass({ ...currentClass, timetableData: initializeTimetableData() });
-    }
-  }, []);
-
-  const updateTimetableCell = (day, timeIndex, field, value) => {
-    const updated = { ...currentClass.timetableData };
-    updated[day][timeIndex] = { ...updated[day][timeIndex], [field]: value };
-    setCurrentClass({ ...currentClass, timetableData: updated });
-  };
-
-  const parseCSVInput = (text) => {
-    const lines = text.split('\n').filter(l => l.trim());
-    const data = initializeTimetableData();
-    let successCount = 0;
-    
-    lines.forEach(line => {
-      const parts = line.split(/[,\t|]/).map(p => p.trim()).filter(p => p);
-      
-      if (parts.length >= 3) {
-        const [dayPart, timePart, ...rest] = parts;
-        const subject = rest.slice(0, -1).join(' ') || rest[0];
-        const faculty = rest[rest.length - 1];
-        
-        const dayMatch = days.find(d => d.toLowerCase().startsWith(dayPart.toLowerCase().substring(0, 3)));
-        
-        if (dayMatch) {
-          const slotIndex = timeSlots.findIndex(s => 
-            s.time === timePart || 
-            s.label.toLowerCase().includes(timePart.toLowerCase().replace(/[:\s]/g, ''))
-          );
-          
-          if (slotIndex >= 0) {
-            data[dayMatch][slotIndex] = {
-              time: timeSlots[slotIndex].time,
-              subject: subject,
-              faculty: faculty,
-              duration: timeSlots[slotIndex].duration,
-              type: 'THEORY'
-            };
-            successCount++;
-          }
-        }
+        if (ttData) { const parsed = JSON.parse(ttData.value); setTimetables(Array.isArray(parsed) ? parsed : []); }
+        if (bookData) { const parsed = JSON.parse(bookData.value); setFacultyBookings(Array.isArray(parsed) ? parsed : []); }
+        if (allocData) { const parsed = JSON.parse(allocData.value); setAllocations(Array.isArray(parsed) ? parsed : []); }
+        if (roomData) { const parsed = JSON.parse(roomData.value); setClassrooms(Array.isArray(parsed) ? parsed : []); }
+        if (extData) { const parsed = JSON.parse(extData.value); setExternalTimetables(Array.isArray(parsed) ? parsed : []); }
+      } catch (e) {
+        console.log('No saved data');
       }
-    });
-    
-    return { data, successCount };
+    };
+    loadData();
+  }, []);
+
+  const save = async (key, data) => {
+    try {
+      await storage.set(key, JSON.stringify(data));
+    } catch (e) {
+      console.error('Save failed:', e);
+    }
   };
 
+  const addResource = () => {
+    if (!newResource.name) return alert('Name is required');
+    if (classrooms.find(c => c.name === newResource.name)) return alert('Resource already exists');
+    const updated = [...classrooms, newResource];
+    setClassrooms(updated);
+    save('classrooms', updated);
+    setNewResource({ name: '', type: 'Classroom' });
+    alert('Resource added!');
+  };
+
+  const removeResource = (name) => {
+    if (confirm(`Delete ${name}?`)) {
+      const updated = classrooms.filter(c => c.name !== name);
+      setClassrooms(updated);
+      save('classrooms', updated);
+    }
+  };
+
+  // Phase 5: File Upload Handler
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
-    setProcessing(true);
+
+    if (!uploadRoom && !file.name.endsWith('.csv')) {
+      alert('Please select a target room for this file!');
+      return;
+    }
+
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
-      const text = event.target.result;
-      const { data: parsedData, successCount } = parseCSVInput(text);
-      setCurrentClass({ ...currentClass, timetableData: parsedData });
-      setProcessing(false);
-      alert(`✅ Successfully imported ${successCount} classes from file!`);
+      const content = event.target.result;
+      const newExt = {
+        id: Date.now(),
+        name: file.name,
+        type: file.type.includes('image') ? 'image' : (file.name.endsWith('.csv') ? 'csv' : 'pdf'),
+        data: content,
+        targetRoom: uploadRoom || 'Auto (CSV)',
+        timestamp: new Date().toLocaleString()
+      };
+
+      const updated = [...externalTimetables, newExt];
+      setExternalTimetables(updated);
+      save('externalTimetables', updated);
+      setUploadRoom('');
+      e.target.value = null;
     };
-    
-    reader.onerror = () => {
-      setProcessing(false);
-      alert('❌ Error reading file. Please try again.');
-    };
-    
-    reader.readAsText(file);
+
+    if (file.name.endsWith('.csv')) {
+      reader.readAsText(file);
+    } else {
+      reader.readAsDataURL(file);
+    }
   };
 
-  const processAndAllocateClass = () => {
-    const { year, section, timetableData } = currentClass;
-    const defaultRoom = `1${year === '1' ? '1' : year === '2' || year === '3' ? '2' : '3'}0${section.charCodeAt(0) - 64}`;
-    
-    const processed = [];
-    const usedLabs = new Set();
-    
+  const removeExternal = (id) => {
+    const updated = externalTimetables.filter(t => t.id !== id);
+    setExternalTimetables(updated);
+    save('externalTimetables', updated);
+  };
+
+  const addCourse = () => {
+    setCurrentTT({
+      ...currentTT,
+      courses: [...currentTT.courses, {
+        id: Date.now(),
+        code: '',
+        name: '',
+        mne: '',
+        faculty: '',
+        dept: 'IT',
+        labResource: '',
+        curr: 3,
+        allot: 0
+      }]
+    });
+  };
+
+  const updateCourse = (id, field, value) => {
+    setCurrentTT({
+      ...currentTT,
+      courses: currentTT.courses.map(c => c.id === id ? { ...c, [field]: value } : c)
+    });
+  };
+
+  const updateSchedule = (day, period, value) => {
+    setCurrentTT(prev => ({
+      ...prev,
+      schedule: {
+        ...prev.schedule,
+        [day]: {
+          ...prev.schedule[day],
+          [period]: value
+        }
+      }
+    }));
+  };
+
+  const calcPeriods = () => {
+    const counts = {};
     days.forEach(day => {
-      timetableData[day]?.forEach((slot, idx) => {
-        if (!slot.subject) return;
-        
-        const nextSlot = timetableData[day]?.[idx + 1];
-        const prevSlot = idx > 0 ? timetableData[day]?.[idx - 1] : null;
-        
-        // Check if this is a continuation of previous slot
-        if (prevSlot && prevSlot.subject === slot.subject && prevSlot.faculty === slot.faculty) {
-          return; // Skip, it's a continuation
+      timeSlots.forEach(slot => {
+        const val = currentTT.schedule[day]?.[slot.p];
+        if (val) {
+          counts[val] = (counts[val] || 0) + 1;
         }
-        
-        // Check how many consecutive slots have the same subject
-        let periodCount = 1;
-        let totalDuration = slot.duration;
-        let tempIdx = idx + 1;
-        
-        while (tempIdx < timetableData[day].length) {
-          const tempSlot = timetableData[day][tempIdx];
-          if (tempSlot.subject === slot.subject && tempSlot.faculty === slot.faculty) {
-            periodCount++;
-            totalDuration += tempSlot.duration;
-            tempIdx++;
-          } else {
-            break;
-          }
-        }
-        
-        const isLab = slot.subject.includes('(L)') || 
-                     slot.subject.toUpperCase().includes('LAB') ||
-                     periodCount >= 2;
-        
-        if (isLab) {
-          // Check if it's split lab (e.g., "NP(L)/FSWD(L)")
-          const isSplitLab = slot.subject.includes('/');
-          
-          if (isSplitLab) {
-            const subjects = slot.subject.split('/').map(s => s.trim());
-            
-            // Allocate two different labs
-            const availableLabs = classrooms.filter(r => r.type === 'IT_LAB' && !usedLabs.has(`${r.id}-${day}-${slot.time}`));
-            
-            if (availableLabs.length >= 2) {
-              processed.push({
-                day, time: slot.time, duration: totalDuration, periodCount,
-                subject: subjects[0], faculty: slot.faculty,
-                room: availableLabs[0].id, students: 30, type: 'LAB',
-                batch: 'Batch 1'
-              });
-              
-              processed.push({
-                day, time: slot.time, duration: totalDuration, periodCount,
-                subject: subjects[1], faculty: slot.faculty,
-                room: availableLabs[1].id, students: 30, type: 'LAB',
-                batch: 'Batch 2'
-              });
-              
-              usedLabs.add(`${availableLabs[0].id}-${day}-${slot.time}`);
-              usedLabs.add(`${availableLabs[1].id}-${day}-${slot.time}`);
-            } else {
-              processed.push({
-                day, time: slot.time, duration: totalDuration, periodCount,
-                subject: slot.subject, faculty: slot.faculty,
-                room: 'CONFLICT', students: 60, type: 'LAB',
-                error: 'Not enough labs available'
+      });
+    });
+
+    setCurrentTT(prev => ({
+      ...prev,
+      courses: prev.courses.map(c => ({
+        ...c,
+        allot: counts[c.mne] || 0
+      }))
+    }));
+  };
+
+  const saveTimetable = () => {
+    if (!currentTT.academicYear || !currentTT.period) {
+      alert('❌ Please specify Academic Year and Period');
+      return;
+    }
+    calcPeriods();
+    const newTT = { ...currentTT, id: Date.now() };
+    const newTimetables = [...timetables.filter(t => t.id !== newTT.id), newTT];
+    setTimetables(newTimetables);
+    save('timetables', newTimetables);
+    alert('✅ Timetable saved successfully!');
+  };
+
+  const addBooking = () => {
+    if (!currentBooking.faculty || !currentBooking.date || !currentBooking.reason || !currentBooking.classroom) {
+      alert('❌ All fields including Reason, Date, Faculty, and Room are mandatory.');
+      return;
+    }
+
+    if (!currentBooking.yearLevel) {
+      alert('❌ Please specify the Year Level for this booking.');
+      return;
+    }
+
+    const newBooking = { ...currentBooking, id: Date.now() };
+    const newBookings = [...facultyBookings, newBooking];
+    setFacultyBookings(newBookings);
+    save('bookings', newBookings);
+    setShowBooking(false);
+
+    setCurrentBooking({
+      faculty: '', date: '', day: 'MON', time: '8:15-9:05',
+      duration: 50, classroom: '', reason: '', yearLevel: '3', priority: 'medium'
+    });
+    alert('✅ Booking added successfully!');
+  };
+
+  const resolveConflict = (conflictId, action, data) => {
+    const conflict = conflicts.find(c => c.id === conflictId);
+    if (!conflict) return;
+
+    if (action === 'override') {
+      const newAllocations = allocations.filter(a => a.id !== conflict.collidingAllocationId);
+      const newAlloc = {
+        id: `resolved-${Date.now()}`,
+        type: conflict.type,
+        day: conflict.day,
+        time: conflict.time,
+        classroom: conflict.classroom,
+        subject: conflict.subject,
+        faculty: conflict.faculty,
+        priority: 'force'
+      };
+
+      setAllocations([...newAllocations, newAlloc]);
+      save('allocations', [...newAllocations, newAlloc]);
+      setConflicts(conflicts.filter(c => c.id !== conflictId));
+    } else if (action === 'reschedule') {
+      setConflicts(conflicts.filter(c => c.id !== conflictId));
+    }
+    setShowConflictResolver(null);
+  };
+
+  // Phase 6: Rewritten runAllocation to Log for Debugging
+  const runAllocation = () => {
+    console.log("--- Starting Allocation ---");
+    console.log("Timetables:", timetables.length);
+    console.log("Faculty Bookings:", facultyBookings.length);
+    console.log("External Timetables:", JSON.stringify(externalTimetables));
+
+    const newAllocations = [];
+    const newConflicts = [];
+    const occupied = {};
+
+    const addToOccupied = (day, time, room, data, allocId) => {
+      const key = `${day}-${time}-${room}`;
+      occupied[key] = { ...data, allocId };
+    };
+
+    try {
+      // Phase 5: Process External Timetables
+      externalTimetables.forEach(ext => {
+        console.log("Processing External:", ext.name);
+        if (ext.type === 'csv') {
+          const rows = ext.data.split('\n');
+          const roomMatch = ext.name.match(/Room\s*(\d+)/i) || ['Unknown', 'Unknown'];
+          const targetRoom = ext.targetRoom !== 'Auto (CSV)' ? ext.targetRoom : roomMatch[0];
+
+          rows.forEach((row, idx) => {
+            if (idx === 0) return;
+            const cols = row.split(',');
+            if (cols.length < 2) return;
+            const day = cols[0].trim().toUpperCase();
+            if (days.includes(day)) {
+              timeSlots.forEach((slot, sIdx) => {
+                const subject = cols[sIdx + 1]?.trim();
+                if (subject) {
+                  const allocId = `ext-${ext.id}-${day}-${slot.p}`;
+                  addToOccupied(day, slot.t, targetRoom, { type: 'External (CSV)', subject }, allocId);
+                  newAllocations.push({
+                    id: allocId,
+                    type: 'External', day, time: slot.t, classroom: targetRoom,
+                    subject: `${subject} (CSV: ${ext.name})`
+                  });
+                }
               });
             }
-          } else {
-            // Single lab for whole class or split batches
-            const needSplit = slot.subject.includes('(L)') || slot.subject.toLowerCase().includes('batch');
-            
-            if (needSplit) {
-              const availableLabs = classrooms.filter(r => r.type === 'IT_LAB' && !usedLabs.has(`${r.id}-${day}-${slot.time}`));
-              
-              if (availableLabs.length >= 2) {
-                processed.push({
-                  day, time: slot.time, duration: totalDuration, periodCount,
-                  subject: slot.subject, faculty: slot.faculty,
-                  room: availableLabs[0].id, students: 30, type: 'LAB',
-                  batch: 'Batch 1'
+          });
+        } else {
+          if (ext.targetRoom) {
+            days.forEach(day => {
+              bookingTimeSlots.forEach(slot => {
+                const allocId = `ext-${ext.id}-${day}-${slot.p}`;
+                addToOccupied(day, slot.t, ext.targetRoom, { type: 'External (Manual)', subject: 'Manual File Schedule' }, allocId);
+                newAllocations.push({
+                  id: allocId,
+                  type: 'External', day, time: slot.t, classroom: ext.targetRoom,
+                  subject: `Manual Schedule (${ext.name})`
                 });
-                
-                processed.push({
-                  day, time: slot.time, duration: totalDuration, periodCount,
-                  subject: slot.subject, faculty: slot.faculty,
-                  room: availableLabs[1].id, students: 30, type: 'LAB',
-                  batch: 'Batch 2'
-                });
-                
-                usedLabs.add(`${availableLabs[0].id}-${day}-${slot.time}`);
-                usedLabs.add(`${availableLabs[1].id}-${day}-${slot.time}`);
+              });
+            });
+          }
+        }
+      });
+
+      // 2. Faculty Bookings
+      facultyBookings.forEach(book => {
+        const key = `${book.day}-${book.time}-${book.classroom}`;
+        if (occupied[key]) {
+          newConflicts.push({
+            id: `conf-${book.id}`,
+            msg: `Faculty Booking Clash: ${book.faculty}`,
+            day: book.day, time: book.time, classroom: book.classroom,
+            collidingAllocationId: occupied[key].allocId,
+            type: book.priority, subject: book.reason, faculty: book.faculty,
+            sugg: 'Reschedule or Override'
+          });
+        } else {
+          const allocId = `book-${book.id}`;
+          addToOccupied(book.day, book.time, book.classroom, { type: 'Faculty Booking', subject: book.reason }, allocId);
+          newAllocations.push({
+            id: allocId,
+            type: 'Faculty Booking', day: book.day, time: book.time, classroom: book.classroom,
+            subject: book.reason, faculty: book.faculty
+          });
+        }
+      });
+
+      // 3. Process Student Timetables (Allocating Labs & Classrooms)
+      timetables.forEach(tt => {
+        console.log("Processing TT ID:", tt.id);
+        // Identify Sessions (Continuous periods of same subject)
+        const sessions = [];
+
+        days.forEach(day => {
+          let currentSession = null;
+
+          timeSlots.forEach((slot, idx) => {
+            // Check logic: Slot 1 -> Slot 8
+            const subject = tt.schedule[day]?.[slot.p];
+
+            if (subject) {
+              if (currentSession && currentSession.subject === subject) {
+                // Extend session
+                currentSession.periods.push(slot);
               } else {
-                processed.push({
-                  day, time: slot.time, duration: totalDuration, periodCount,
-                  subject: slot.subject, faculty: slot.faculty,
-                  room: 'CONFLICT', students: 60, type: 'LAB',
-                  error: 'Not enough labs available'
+                // New session
+                if (currentSession) sessions.push(currentSession);
+                currentSession = {
+                  subject,
+                  day,
+                  periods: [slot],
+                  course: tt.courses.find(c => c.mne === subject)
+                };
+              }
+            } else {
+              if (currentSession) {
+                sessions.push(currentSession);
+                currentSession = null;
+              }
+            }
+          });
+          if (currentSession) sessions.push(currentSession);
+        });
+        console.log("Sessions identified:", sessions.length);
+
+        // Allocate Sessions
+        sessions.forEach(session => {
+          // Determine needed lab/room
+          // Check if Batch Split (contains /)
+          const isBatchSplit = session.subject.includes('/');
+          const subjects = isBatchSplit ? session.subject.split('/') : [session.subject];
+
+          subjects.forEach(sub => {
+            const cleanSub = sub.trim();
+            const course = tt.courses.find(c => c.mne === cleanSub) || { labResource: '' }; // Fallback if ad-hoc
+
+            // Priority 1: Assigned Lab Resource
+            let targetRoom = course.labResource;
+            // Priority 2: Default Classroom
+            if (!targetRoom) targetRoom = tt.classroom;
+
+            // If Batch Split, we need distinct logic?
+            // For now, if user typed "LabA" it allocates to LabA's resource.
+            // If user typed "LabA/LabB", we iterate:
+            // 1. Allocate LabA to its resource.
+            // 2. Allocate LabB to its resource.
+
+            // ATOMIC CHECK: Room must be free for ALL periods in session
+            let isRoomFree = true;
+            if (targetRoom) {
+              session.periods.forEach(p => {
+                if (occupied[`${session.day}-${p.t}-${targetRoom}`]) isRoomFree = false;
+              });
+
+              if (isRoomFree) {
+                // Allocate Block
+                session.periods.forEach(p => {
+                  const allocId = `tt-${tt.id}-${session.day}-${p.t}-${cleanSub}`;
+                  addToOccupied(session.day, p.t, targetRoom, { type: 'class', subject: cleanSub }, allocId);
+                  newAllocations.push({
+                    id: allocId,
+                    type: isBatchSplit ? 'Batch Split' : 'Class',
+                    day: session.day,
+                    time: p.t,
+                    classroom: targetRoom,
+                    subject: `${cleanSub} (${tt.yearLevel}-${tt.section})`,
+                    faculty: course.faculty
+                  });
+                });
+              } else {
+                // Conflict
+                const firstP = session.periods[0];
+                const conflictingAlloc = occupied[`${session.day}-${firstP.t}-${targetRoom}`]; // Just grab first conflict
+                newConflicts.push({
+                  id: `conflict-${tt.id}-${session.day}-${cleanSub}`,
+                  msg: `Block Conflict: ${cleanSub} (Cont: ${session.periods.length} hrs)`,
+                  day: session.day,
+                  time: `${firstP.t}..`,
+                  classroom: targetRoom,
+                  collidingAllocationId: conflictingAlloc?.allocId,
+                  type: 'Student Class',
+                  subject: cleanSub,
+                  sugg: `Room ${targetRoom} occupied during block.`
                 });
               }
             } else {
-              processed.push({
-                day, time: slot.time, duration: totalDuration, periodCount,
-                subject: slot.subject, faculty: slot.faculty,
-                room: defaultRoom, students: 60, type: 'THEORY'
-              });
+              // No room assigned (virtual subject?)
             }
-          }
-        } else {
-          processed.push({
-            day, time: slot.time, duration: totalDuration, periodCount,
-            subject: slot.subject, faculty: slot.faculty,
-            room: defaultRoom, students: 60, type: 'THEORY'
           });
-        }
+        });
       });
-    });
-    
-    return processed;
-  };
 
-  const addClass = () => {
-    const hasData = Object.values(currentClass.timetableData).some(daySlots => 
-      daySlots.some(slot => slot.subject)
-    );
-    
-    if (!hasData) {
-      alert('❌ Please add timetable data first!');
-      return;
+    } catch (err) {
+      console.error("Allocation Error:", err);
     }
-    
-    const processedSchedule = processAndAllocateClass();
-    const classWithSchedule = { 
-      ...currentClass, 
-      processedSchedule,
-      id: Date.now() 
-    };
-    
-    const newClasses = [...classes, classWithSchedule];
-    setClasses(newClasses);
-    saveToStorage('classes', newClasses);
-    
-    alert('✅ Class added successfully with room allocations!');
-    
-    // Reset for next class
-    setCurrentClass({
-      year: '1',
-      section: 'A',
-      semester: '1',
-      academicYear: '2024-2025',
-      timetableData: initializeTimetableData(),
-      processedSchedule: null
-    });
-  };
 
-  const addManualBooking = () => {
-    if (!currentBooking.faculty || !currentBooking.room || !currentBooking.reason) {
-      alert('❌ Please fill all required fields');
-      return;
-    }
-    
-    const newBookings = [...manualBookings, { ...currentBooking, id: Date.now() }];
-    setManualBookings(newBookings);
-    saveToStorage('bookings', newBookings);
-    
-    setCurrentBooking({
-      faculty: '', room: '', day: 'Monday', time: '08:15',
-      duration: 50, reason: '', forClass: ''
-    });
-    
-    setShowManualBookingModal(false);
-    alert('✅ Room booked successfully!');
-  };
-
-  const handleAllocateRooms = () => {
-    const newAllocations = [];
-    const newConflicts = [];
-    
-    classes.forEach(classData => {
-      classData.processedSchedule?.forEach(session => {
-        const sessionId = `${classData.year}-${classData.section}-${session.day}-${session.time}`;
-        
-        if (session.error) {
-          newConflicts.push({
-            id: sessionId,
-            year: classData.year,
-            section: classData.section,
-            ...session,
-            reason: session.error
-          });
-        } else {
-          newAllocations.push({
-            id: sessionId,
-            year: classData.year,
-            section: classData.section,
-            semester: classData.semester,
-            ...session,
-            building: 'IT Block',
-            roomCapacity: session.type === 'LAB' ? 30 : 60,
-            utilization: session.type === 'LAB' ? '100.0' : '100.0'
-          });
-        }
-      });
-    });
-    
-    manualBookings.forEach(booking => {
-      newAllocations.push({
-        id: `manual-${booking.id}`,
-        subject: `Booking: ${booking.reason}`,
-        faculty: booking.faculty,
-        year: '-',
-        section: booking.forClass || '-',
-        students: '-',
-        day: booking.day,
-        time: booking.time,
-        duration: booking.duration,
-        room: booking.room,
-        building: 'IT Block',
-        roomCapacity: '-',
-        utilization: '-',
-        type: 'MANUAL',
-        periodCount: 1
-      });
-    });
-    
+    console.log("Allocations Generated:", newAllocations.length);
     setAllocations(newAllocations);
     setConflicts(newConflicts);
-    setAnalytics(calculateAnalytics(newAllocations, newConflicts));
-    saveToStorage('allocations', newAllocations);
+    save('allocations', newAllocations);
     setActiveTab('results');
   };
 
-  const calculateAnalytics = (allocs, confs) => {
-    const totalRooms = classrooms.length;
-    const usedRooms = new Set(allocs.map(a => a.room)).size;
-    
-    return {
-      totalAllocations: allocs.length,
-      roomsUsed: usedRooms,
-      totalRooms,
-      freeRooms: totalRooms - usedRooms,
-      utilizationRate: '95.0',
-      conflicts: confs.length,
-      manualBookingsCount: manualBookings.length
-    };
-  };
 
-  const downloadReport = () => {
-    let csv = '\uFEFF';
-    csv += 'IT CLASSROOM ALLOCATION REPORT\n';
-    csv += `Generated,${new Date().toLocaleString()}\n\n`;
-    csv += 'Type,Year,Section,Semester,Subject,Faculty,Day,Time,Duration,Periods,Room,Students,Batch\n';
-    
-    allocations.forEach(a => {
-      const subj = (a.subject || '').replace(/,/g, ';');
-      const fac = (a.faculty || '-').replace(/,/g, ';');
-      csv += `${a.type},${a.year},${a.section},${a.semester||'-'},${subj},${fac},${a.day},${a.time},${a.duration},${a.periodCount||1},${a.room},${a.students},${a.batch||'-'}\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Allocation_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const getColorForPeriods = (periodCount, type) => {
-    if (type === 'LAB') return 'bg-blue-100 border-blue-500 text-blue-900';
-    if (periodCount === 1) return 'bg-green-100 border-green-500 text-green-900';
-    if (periodCount === 2) return 'bg-yellow-100 border-yellow-500 text-yellow-900';
-    if (periodCount === 3) return 'bg-orange-100 border-orange-500 text-orange-900';
-    return 'bg-purple-100 border-purple-500 text-purple-900';
-  };
-
-  const renderProcessedSchedule = () => {
-    if (!currentClass.processedSchedule || currentClass.processedSchedule.length === 0) {
-      return null;
-    }
-
-    return (
-      <div className="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-300 rounded-xl">
-        <h3 className="text-2xl font-bold text-indigo-900 mb-4">📊 Processed Schedule Preview</h3>
-        <p className="text-sm text-gray-700 mb-4">This shows how your timetable will be allocated with rooms and continuous periods grouped by color</p>
-        
-        <div className="mb-4 flex gap-4 flex-wrap text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-blue-100 border-2 border-blue-500 rounded"></div>
-            <span className="font-semibold">Lab Session</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-green-100 border-2 border-green-500 rounded"></div>
-            <span className="font-semibold">1 Period Theory</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-yellow-100 border-2 border-yellow-500 rounded"></div>
-            <span className="font-semibold">2 Continuous Periods</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-orange-100 border-2 border-orange-500 rounded"></div>
-            <span className="font-semibold">3 Continuous Periods</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-purple-100 border-2 border-purple-500 rounded"></div>
-            <span className="font-semibold">4+ Continuous Periods</span>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="bg-indigo-900 text-white">
-                <th className="p-3 border text-left font-bold">Day</th>
-                <th className="p-3 border text-left font-bold">Time</th>
-                <th className="p-3 border text-left font-bold">Subject</th>
-                <th className="p-3 border text-left font-bold">Faculty</th>
-                <th className="p-3 border text-left font-bold">Periods</th>
-                <th className="p-3 border text-left font-bold">Duration</th>
-                <th className="p-3 border text-left font-bold">Room</th>
-                <th className="p-3 border text-left font-bold">Students</th>
-                <th className="p-3 border text-left font-bold">Batch</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentClass.processedSchedule.map((session, idx) => (
-                <tr key={idx} className={`border ${getColorForPeriods(session.periodCount, session.type)}`}>
-                  <td className="p-3 border font-semibold">{session.day}</td>
-                  <td className="p-3 border font-mono">{session.time}</td>
-                  <td className="p-3 border font-semibold">{session.subject}</td>
-                  <td className="p-3 border text-xs">{session.faculty}</td>
-                  <td className="p-3 border text-center font-bold">{session.periodCount}</td>
-                  <td className="p-3 border text-center">{session.duration}m</td>
-                  <td className="p-3 border font-bold text-indigo-900">{session.room}</td>
-                  <td className="p-3 border text-center">{session.students}</td>
-                  <td className="p-3 border text-xs">{session.batch || '-'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        {currentClass.processedSchedule.some(s => s.error) && (
-          <div className="mt-4 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
-            <p className="text-red-900 font-bold">⚠️ Some sessions have conflicts and need attention!</p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderClassTimetableView = () => {
-    if (!selectedClassView) return null;
-    const classData = classes.find(c => c.id === selectedClassView);
-    if (!classData) return null;
-    
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-        <div className="bg-white rounded-lg shadow-2xl max-w-6xl w-full my-8">
-          <div className="p-6 border-b bg-gradient-to-r from-blue-900 to-blue-700 text-white">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-2xl font-bold">Year {classData.year} - Section {classData.section}</h3>
-                <p className="text-sm mt-1">Semester {classData.semester} | {classData.academicYear}</p>
-              </div>
-              <button onClick={() => setSelectedClassView(null)} className="text-white hover:bg-blue-800 p-2 rounded">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-          
-          <div className="p-6 overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border-2 border-gray-300 p-3 font-bold text-left">Time</th>
-                  {days.map(d => <th key={d} className="border-2 border-gray-300 p-3 font-bold">{d}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {timeSlots.map(slot => (
-                  <tr key={slot.time}>
-                    <td className="border-2 border-gray-300 p-3 font-semibold bg-gray-50">{slot.label}</td>
-                    {days.map(day => {
-                      const sess = classData.processedSchedule?.find(s => s.day === day && s.time === slot.time);
-                      const colorClass = sess ? getColorForPeriods(sess.periodCount, sess.type) : 'bg-gray-50';
-                      
-                      return (
-                        <td key={day} className={`border-2 p-3 ${colorClass}`}>
-                          {sess ? (
-                            <div className="space-y-1">
-                              <div className="font-bold text-sm">{sess.subject}</div>
-                              <div className="text-xs">📍 {sess.room}</div>
-                              {sess.faculty && <div className="text-xs">👤 {sess.faculty.split('-')[0]?.trim()}</div>}
-                              {sess.batch && <div className="text-xs font-medium">{sess.batch}</div>}
-                              <div className="text-xs">⏱️ {sess.duration}m ({sess.periodCount}p)</div>
-                            </div>
-                          ) : (
-                            <div className="text-center text-gray-400 py-4">Free</div>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderTimetableTable = () => {
-    return (
-      <div className="overflow-x-auto border-2 border-gray-300 rounded-lg">
-        <table className="w-full text-sm bg-white">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-3 border-2 border-gray-300 font-bold">Time</th>
-              {days.map(day => <th key={day} className="p-3 border-2 border-gray-300 font-bold">{day}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {timeSlots.map((slot, idx) => (
-              <tr key={slot.time}>
-                <td className="p-2 border-2 border-gray-300 bg-gray-100 font-semibold">{slot.label}</td>
-                {days.map(day => {
-                  const daySlot = currentClass.timetableData[day]?.[idx];
-                  if (!daySlot) return <td key={day} className="p-2 border-2 border-gray-300"></td>;
-                  
-                  return (
-                    <td key={day} className="p-2 border-2 border-gray-300">
-                      <div className="space-y-1">
-                        <input
-                          type="text"
-                          value={daySlot.subject}
-                          onChange={(e) => updateTimetableCell(day, idx, 'subject', e.target.value)}
-                          placeholder="Subject (e.g., DSA)"
-                          className="w-full p-1.5 border border-gray-300 rounded text-xs"
-                        />
-                        <select
-                          value={daySlot.faculty}
-                          onChange={(e) => updateTimetableCell(day, idx, 'faculty', e.target.value)}
-                          className="w-full p-1.5 border border-gray-300 rounded text-xs"
-                        >
-                          <option value="">Select faculty</option>
-                          {facultyList.map(f => <option key={f} value={f}>{f.split('-')[0]?.trim()}</option>)}
-                        </select>
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
+  const filteredAllocations = allocations.filter(a => {
+    if (resultsFilter.day !== 'All' && a.day !== resultsFilter.day) return false;
+    if (resultsFilter.time !== 'All' && a.time !== resultsFilter.time) return false;
+    return true;
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <header className="bg-white rounded-xl shadow-lg p-6 mb-6 border-t-4 border-blue-900">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+      <div className="max-w-[1600px] mx-auto p-4 print:p-0 print:max-w-none">
+
+        {/* Header */}
+        <header className="bg-blue-900 text-white rounded-xl shadow-lg p-6 mb-6 flex items-center justify-between print:hidden">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center p-1 shrink-0">
+              <img src="/college_logo.png" alt="Logo" className="w-full h-full object-contain" />
+            </div>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Building2 className="w-10 h-10 text-blue-900" />
-                <h1 className="text-3xl font-bold text-gray-800">IT Classroom Allocation System</h1>
-              </div>
-              <p className="text-gray-600 font-medium">Smart Lab Allocation with Auto-Detection & Color-Coded Schedules</p>
+              <h1 className="text-2xl font-bold tracking-tight">Smart Classroom Allocation System</h1>
+              <p className="text-blue-200 text-sm">Easwari Engineering College • Information Technology</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-sm font-semibold opacity-80">
+              {classrooms.length} Resources ({classrooms.filter(r => r.type === 'Lab').length} Labs) | {new Date().toLocaleDateString()}
             </div>
           </div>
         </header>
 
-        <div className="bg-white rounded-xl shadow-lg mb-6 overflow-hidden">
-          <div className="flex border-b-2 border-gray-200">
-            {['input', 'booking', 'allocate', 'results'].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} 
-                disabled={(tab === 'allocate' && classes.length === 0) || (tab === 'results' && allocations.length === 0)}
-                className={`flex-1 py-4 px-4 font-semibold text-sm transition-all border-b-4 ${
-                  activeTab === tab 
-                    ? 'border-blue-900 text-blue-900 bg-blue-50' 
-                    : 'border-transparent text-gray-600 hover:text-blue-900 hover:bg-gray-50'
-                } ${((tab === 'allocate' && classes.length === 0) || (tab === 'results' && allocations.length === 0)) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
-                {tab === 'input' && <><Upload className="w-4 h-4 inline mr-2" />Add Classes</>}
-                {tab === 'booking' && <><Calendar className="w-4 h-4 inline mr-2" />Faculty Booking</>}
-                {tab === 'allocate' && <><CheckCircle className="w-4 h-4 inline mr-2" />Allocate</>}
-                {tab === 'results' && <><TrendingUp className="w-4 h-4 inline mr-2" />Results</>}
-              </button>
-            ))}
-          </div>
+        {/* Navigation */}
+        <div className="bg-white rounded-xl shadow-sm mb-6 flex overflow-hidden border border-slate-200 print:hidden overflow-x-auto">
+          {[
+            { id: 'resources', label: 'Resource Manager', icon: <Settings className="w-5 h-5" /> },
+            { id: 'generator', label: 'Timetable Generator', icon: <Calendar className="w-5 h-5" /> },
+            { id: 'faculty', label: 'Faculty Booking', icon: <Users className="w-5 h-5" /> },
+            { id: 'allocate', label: 'Allocations', icon: <CheckCircle className="w-5 h-5" /> },
+            { id: 'results', label: 'View Results', icon: <LayoutGrid className="w-5 h-5" /> },
+            { id: 'unallocated', label: 'Free Resources', icon: <BookOpen className="w-5 h-5" /> }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 min-w-[150px] flex items-center justify-center gap-2 py-4 font-semibold transition-all
+                        ${activeTab === tab.id ? 'bg-blue-50 text-blue-900 border-b-2 border-blue-900' : 'text-slate-500 hover:bg-slate-50'}
+                    `}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          {activeTab === 'input' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Class Timetable</h2>
-              
-              <div className="grid grid-cols-4 gap-4 mb-6">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Academic Year</label>
-                  <input type="text" value={currentClass.academicYear} 
-                    onChange={(e) => setCurrentClass({ ...currentClass, academicYear: e.target.value })}
-                    className="w-full p-3 border-2 border-gray-300 rounded-lg"
-                    placeholder="2024-2025" />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Year</label>
-                  <select value={currentClass.year} 
-                    onChange={(e) => setCurrentClass({ ...currentClass, year: e.target.value })}
-                    className="w-full p-3 border-2 border-gray-300 rounded-lg">
-                    <option value="1">1st Year</option>
-                    <option value="2">2nd Year</option>
-                    <option value="3">3rd Year</option>
-                    <option value="4">4th Year</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Section</label>
-                  <select value={currentClass.section} 
-                    onChange={(e) => setCurrentClass({ ...currentClass, section: e.target.value })}
-                    className="w-full p-3 border-2 border-gray-300 rounded-lg">
-                    <option value="A">Section A</option>
-                    <option value="B">Section B</option>
-                    <option value="C">Section C</option>
-                    <option value="D">Section D</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Semester</label>
-                  <select value={currentClass.semester} 
-                    onChange={(e) => setCurrentClass({ ...currentClass, semester: e.target.value })}
-                    className="w-full p-3 border-2 border-gray-300 rounded-lg">
-                    {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={s}>Semester {s}</option>)}
-                  </select>
+        {/* Content Area */}
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200 min-h-[600px] print:shadow-none print:border-none print:h-auto">
+
+          {/* Phase 4: Resource Manager Tab */}
+          {activeTab === 'resources' && (
+            <div className="p-8 max-w-4xl mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-blue-900">Resource Management</h2>
+                <div className="bg-blue-50 px-4 py-2 rounded-lg text-blue-800 text-sm font-semibold">
+                  Total Resources: {classrooms.length}
                 </div>
               </div>
 
-              <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
-                <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                  <Info className="w-5 h-5" />
-                  CSV/Text File Format Guide
-                </h3>
-                <div className="text-sm text-blue-800 space-y-1">
-                  <p><strong>Format:</strong> Day, Time, Subject, Faculty</p>
-                  <p><strong>Example 1:</strong> Monday, 08:15, Data Structures, Dr. Smith</p>
-                  <p><strong>Example 2 (Lab):</strong> Tuesday, 09:05, Network Programming (L), Dr. Johnson</p>
-                  <p><strong>Example 3 (Split Lab):</strong> Wednesday, 10:10, NP(L)/FSWD(L), Dr. Brown</p>
-                  <p className="text-xs mt-2 text-blue-700">💡 For labs: Add (L) suffix or use "/" to split between two different subjects</p>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-3">Upload CSV/Text File</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-all">
-                  <FileText className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                  <label className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold cursor-pointer inline-flex items-center gap-2">
-                    <Upload className="w-5 h-5" />
-                    {processing ? 'Processing...' : 'Choose CSV/Text File'}
-                    <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="hidden" disabled={processing} />
-                  </label>
-                  <p className="text-sm text-gray-600 mt-3">Accepts .csv and .txt files</p>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-bold text-gray-800">Or Enter Timetable Manually</h3>
-                  <button onClick={() => {
-                    setCurrentClass({ ...currentClass, timetableData: initializeTimetableData(), processedSchedule: null });
-                  }}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-                    <Trash2 className="w-4 h-4 inline mr-2" />Clear All
+              <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Plus className="w-5 h-5" /> Add New Resource</h3>
+                <div className="flex gap-4">
+                  <input
+                    className="flex-1 p-2 border rounded-md"
+                    placeholder="Resource Name (e.g. 1205, IoT Lab)"
+                    value={newResource.name}
+                    onChange={e => setNewResource({ ...newResource, name: e.target.value })}
+                  />
+                  <select
+                    className="p-2 border rounded-md w-40"
+                    value={newResource.type}
+                    onChange={e => setNewResource({ ...newResource, type: e.target.value })}
+                  >
+                    <option value="Classroom">Classroom</option>
+                    <option value="Lab">Lab</option>
+                  </select>
+                  <button
+                    onClick={addResource}
+                    className="bg-green-600 text-white px-6 rounded-md font-bold hover:bg-green-700"
+                  >
+                    Add
                   </button>
                 </div>
-                {renderTimetableTable()}
-                <div className="mt-4 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
-                  <p className="text-sm font-semibold text-yellow-900">
-                    💡 <strong>Tips:</strong>
-                  </p>
-                  <ul className="text-sm text-yellow-800 mt-2 space-y-1 list-disc list-inside">
-                    <li>For single lab: Add "(L)" - e.g., "Database (L)"</li>
-                    <li>For split labs: Use "/" - e.g., "NP(L)/FSWD(L)"</li>
-                    <li>Enter same subject in consecutive periods for continuous classes</li>
-                    <li>System will auto-detect and group continuous periods</li>
-                  </ul>
-                </div>
               </div>
 
-              <button onClick={() => {
-                const processedSchedule = processAndAllocateClass();
-                setCurrentClass({ ...currentClass, processedSchedule });
-              }}
-                className="bg-purple-700 hover:bg-purple-600 text-white px-8 py-4 rounded-lg font-bold text-lg mb-6">
-                <Eye className="w-6 h-6 inline mr-3" />Preview Room Allocation
-              </button>
-
-              {renderProcessedSchedule()}
-
-              <button onClick={addClass}
-                className="bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg mt-6">
-                <Plus className="w-6 h-6 inline mr-3" />Add Class to System
-              </button>
-
-              {classes.length > 0 && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-bold text-gray-800 mb-4">Added Classes ({classes.length})</h3>
-                  <div className="grid gap-4">
-                    {classes.map(cls => (
-                      <div key={cls.id} className="bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-gray-300 rounded-lg p-4 flex justify-between items-center">
-                        <div className="flex-1">
-                          <p className="font-bold text-gray-800 text-lg">
-                            Year {cls.year} - Section {cls.section} | Semester {cls.semester}
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            📅 {cls.academicYear} | 📚 {cls.processedSchedule?.length || 0} sessions allocated
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => setSelectedClassView(cls.id)}
-                            className="text-blue-600 hover:text-blue-800 p-3 rounded-lg bg-blue-100"
-                            title="View Timetable">
-                            <Eye className="w-5 h-5" />
-                          </button>
-                          <button onClick={() => {
-                            const newClasses = classes.filter(c => c.id !== cls.id);
-                            setClasses(newClasses);
-                            saveToStorage('classes', newClasses);
-                          }}
-                            className="text-red-600 hover:text-red-800 p-3 rounded-lg bg-red-100">
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {classrooms.map(c => (
+                  <div key={c.name} className="bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center group">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2 h-12 rounded-full ${c.type === 'Lab' ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
+                      <div>
+                        <h4 className="font-bold text-lg">{c.name}</h4>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${c.type === 'Lab' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
+                          {c.type}
+                        </span>
                       </div>
-                    ))}
+                    </div>
+                    <button
+                      onClick={() => removeResource(c.name)}
+                      className="text-gray-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
           )}
 
-          {activeTab === 'booking' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Faculty Room Booking</h2>
-              
-              <button onClick={() => setShowManualBookingModal(true)}
-                className="bg-green-700 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-bold mb-6">
-                <Plus className="w-5 h-5 inline mr-2" />New Room Booking
-              </button>
-
-              {manualBookings.length === 0 ? (
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                  <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-700 font-bold text-xl">No bookings yet</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {manualBookings.map(booking => (
-                    <div key={booking.id} className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="font-bold text-gray-800 text-lg mb-2">👤 {booking.faculty}</p>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div><span className="font-semibold">🏢 Room:</span> {booking.room}</div>
-                            <div><span className="font-semibold">📅 Day:</span> {booking.day}</div>
-                            <div><span className="font-semibold">🕐 Time:</span> {booking.time}</div>
-                            <div><span className="font-semibold">⏱️ Duration:</span> {booking.duration} min</div>
-                          </div>
-                          <div className="mt-3 bg-white rounded-lg border-2 border-gray-200 p-3">
-                            <span className="font-semibold">📝 Reason:</span> {booking.reason}
-                          </div>
-                        </div>
-                        <button onClick={() => {
-                          const newBookings = manualBookings.filter(b => b.id !== booking.id);
-                          setManualBookings(newBookings);
-                          saveToStorage('bookings', newBookings);
-                        }}
-                          className="text-red-600 hover:text-red-800 p-3 rounded-lg ml-4">
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+          {activeTab === 'generator' && (
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left: Input Form */}
+                <div className="lg:col-span-1 space-y-6 print:hidden">
+                  <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h3 className="font-bold text-lg text-blue-900 border-b pb-2">Class Details (Mandatory)</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase">Year</label>
+                        <select className="w-full p-2 border rounded-md" value={currentTT.yearLevel} onChange={e => setCurrentTT({ ...currentTT, yearLevel: e.target.value })}>
+                          <option value="1">I Year</option>
+                          <option value="2">II Year</option>
+                          <option value="3">III Year</option>
+                          <option value="4">IV Year</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase">Section</label>
+                        <select className="w-full p-2 border rounded-md" value={currentTT.section} onChange={e => setCurrentTT({ ...currentTT, section: e.target.value })}>
+                          <option>A</option><option>B</option><option>C</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase">Semester</label>
+                        <select className="w-full p-2 border rounded-md" value={currentTT.semester} onChange={e => setCurrentTT({ ...currentTT, semester: e.target.value })}>
+                          {[1, 2, 3, 4, 5, 6, 7, 8].map(s => <option key={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase">Default Room</label>
+                        <select className="w-full p-2 border rounded-md" value={currentTT.classroom} onChange={e => setCurrentTT({ ...currentTT, classroom: e.target.value })}>
+                          {classrooms.filter(c => c.type === 'Classroom').map(c => <option key={c.name}>{c.name}</option>)}
+                        </select>
                       </div>
                     </div>
-                  ))}
+                    <input className="w-full p-2 border rounded-md text-sm" placeholder="Academic Year (e.g., 2024-2025)" value={currentTT.academicYear} onChange={e => setCurrentTT({ ...currentTT, academicYear: e.target.value })} />
+                    <input className="w-full p-2 border rounded-md text-sm" placeholder="Period (e.g., June-Dec)" value={currentTT.period} onChange={e => setCurrentTT({ ...currentTT, period: e.target.value })} />
+                    <input className="w-full p-2 border rounded-md text-sm" placeholder="Chairperson Name" value={currentTT.chairperson} onChange={e => setCurrentTT({ ...currentTT, chairperson: e.target.value })} />
+                    <input className="w-full p-2 border rounded-md text-sm" placeholder="Coordinator Name" value={currentTT.coordinator} onChange={e => setCurrentTT({ ...currentTT, coordinator: e.target.value })} />
+                    <input className="w-full p-2 border rounded-md text-sm" placeholder="Regulation (e.g., R2023)" value={currentTT.regulation} onChange={e => setCurrentTT({ ...currentTT, regulation: e.target.value })} />
+                  </div>
+
+                  <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <h3 className="font-bold text-lg text-blue-900">Courses & Lab Resource</h3>
+                      <button onClick={addCourse} className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md flex items-center gap-1 hover:bg-blue-700">
+                        <Plus className="w-3 h-3" /> Add
+                      </button>
+                    </div>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {currentTT.courses.length === 0 && <div className="text-gray-400 text-xs italic text-center py-4">Add courses to start scheduling</div>}
+                      {currentTT.courses.map(c => (
+                        <div key={c.id} className="bg-white p-2 rounded shadow-sm border space-y-2">
+                          <div className="grid grid-cols-12 gap-1">
+                            <input className="col-span-3 text-xs p-1 border rounded" placeholder="Name" value={c.name} onChange={e => updateCourse(c.id, 'name', e.target.value)} />
+                            <input className="col-span-3 text-xs p-1 border rounded" placeholder="Code" value={c.code} onChange={e => updateCourse(c.id, 'code', e.target.value)} />
+                            <input className="col-span-2 text-xs p-1 border rounded" placeholder="MNE" value={c.mne} onChange={e => updateCourse(c.id, 'mne', e.target.value)} />
+                            <input className="col-span-3 text-xs p-1 border rounded" placeholder="Faculty" value={c.faculty} onChange={e => updateCourse(c.id, 'faculty', e.target.value)} />
+                            <button onClick={() => setCurrentTT({ ...currentTT, courses: currentTT.courses.filter(x => x.id !== c.id) })} className="col-span-1 text-red-500 hover:bg-red-50 p-1 rounded"><Trash2 className="w-4 h-4 mx-auto" /></button>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-gray-500">Lab Res:</span>
+                            <select className="flex-1 text-xs p-1 border rounded" value={c.labResource} onChange={e => updateCourse(c.id, 'labResource', e.target.value)}>
+                              <option value="">-- None --</option>
+                              {classrooms.filter(r => r.type === 'Lab').map(r => <option key={r.name} value={r.name}>{r.name}</option>)}
+                            </select>
+                            <span className="text-xs font-bold text-gray-500">Prds:</span>
+                            <input type="number" className="w-12 text-xs p-1 border rounded" value={c.curr} onChange={e => updateCourse(c.id, 'curr', e.target.value)} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h3 className="font-bold text-lg text-blue-900 border-b pb-2">Schedule (Auto-fill)</h3>
+                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                      {days.map(d => (
+                        <div key={d} className="flex gap-2 items-center">
+                          <div className="w-16 font-bold text-xs">{d}</div>
+                          <div className="flex-1 overflow-x-auto">
+                            <div className="flex gap-1 min-w-max">
+                              {timeSlots.map(s => (
+                                <div key={s.p} className="flex flex-col items-center">
+                                  <span className="text-[9px] text-gray-500">{s.p}</span>
+                                  <input
+                                    list={`courses-${d}-${s.p}`}
+                                    className="w-16 text-center text-xs p-1 border rounded focus:border-blue-500"
+                                    value={currentTT.schedule[d]?.[s.p] || ''}
+                                    onChange={e => updateSchedule(d, s.p, e.target.value)}
+                                  />
+                                  <datalist id={`courses-${d}-${s.p}`}>
+                                    {currentTT.courses.map(c => <option key={c.id} value={c.mne} />)}
+                                  </datalist>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button onClick={calcPeriods} className="flex-1 bg-purple-600 text-white py-2 rounded-lg font-bold hover:bg-purple-700 flex justify-center items-center gap-2">
+                      <LayoutGrid className="w-4 h-4" /> Calc
+                    </button>
+                    <button onClick={saveTimetable} className="flex-1 bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700 flex justify-center items-center gap-2">
+                      <Save className="w-4 h-4" /> Save
+                    </button>
+                  </div>
+
+                  <button onClick={() => window.print()} className="w-full bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800 flex justify-center items-center gap-2 mt-4 shadow-lg">
+                    <Printer className="w-5 h-5" /> Print / Save as PDF
+                  </button>
+                </div>
+
+                {/* Right: Preview */}
+                <div className="lg:col-span-2 bg-gray-100 p-8 rounded-xl overflow-auto print:p-0 print:bg-white print:overflow-visible">
+                  <div className="print:hidden mb-4 flex justify-between items-center">
+                    <h3 className="font-bold text-gray-500">Live Preview</h3>
+                    <div className="text-xs text-gray-500">
+                      Ensure "Background Graphics" is ON in Print Settings
+                    </div>
+                  </div>
+                  <TimetablePreview
+                    data={currentTT}
+                    timeSlots={timeSlots} // Passed separate timeSlots (without Spl)
+                    days={days}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'faculty' && (
+            <div className="p-8 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4 text-blue-900">Faculty Resource Booking</h2>
+                  <button
+                    onClick={() => setShowBooking(!showBooking)}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 transition w-full justify-center"
+                  >
+                    <Plus className="w-5 h-5" /> New Booking Request
+                  </button>
+                </div>
+                <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+                  <h3 className="font-bold text-yellow-900 mb-2 flex items-center gap-2"><AlertCircle className="w-5 h-5" /> Current Alloc Mode</h3>
+                  <div className="flex gap-4 mt-2">
+                    <label className="flex items-center gap-2 cursor-pointer p-2 bg-white rounded border border-yellow-200 flex-1 hover:bg-yellow-100">
+                      <input type="radio" checked={priorityMode === 'student'} onChange={() => setPriorityMode('student')} className="accent-blue-600 w-5 h-5" />
+                      <span className="font-semibold text-sm">Student First</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer p-2 bg-white rounded border border-yellow-200 flex-1 hover:bg-yellow-100">
+                      <input type="radio" checked={priorityMode === 'faculty'} onChange={() => setPriorityMode('faculty')} className="accent-red-600 w-5 h-5" />
+                      <span className="font-semibold text-sm">Faculty First</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {showBooking && (
+                <div className="bg-white p-6 rounded-xl border-2 border-blue-100 shadow-xl mb-8">
+                  <h3 className="font-bold text-lg mb-4">Mandatory Booking Details</h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <input placeholder="*Faculty Name" className="p-2 border rounded" value={currentBooking.faculty} onChange={e => setCurrentBooking({ ...currentBooking, faculty: e.target.value })} />
+                    <div>
+                      <label className="text-xs font-bold text-gray-500">Date</label>
+                      <input type="date" className="w-full p-2 border rounded" value={currentBooking.date} onChange={e => setCurrentBooking({ ...currentBooking, date: e.target.value })} />
+                    </div>
+                    <select className="p-2 border rounded" value={currentBooking.day} onChange={e => setCurrentBooking({ ...currentBooking, day: e.target.value })}>
+                      {days.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                    <select className="p-2 border rounded" value={currentBooking.time} onChange={e => setCurrentBooking({ ...currentBooking, time: e.target.value })}>
+                      {bookingTimeSlots.map(s => <option key={s.t} value={s.t}>{s.t} ({s.p === 'Spl' ? 'Special' : 'Pd ' + s.p})</option>)}
+                    </select>
+                    <select className="p-2 border rounded" value={currentBooking.classroom} onChange={e => setCurrentBooking({ ...currentBooking, classroom: e.target.value })}>
+                      <option value="">-- Select Room --</option>
+                      {classrooms.map(c => <option key={c.name} value={c.name}>{c.name} ({c.type})</option>)}
+                    </select>
+                    <select className="p-2 border rounded" value={currentBooking.yearLevel} onChange={e => setCurrentBooking({ ...currentBooking, yearLevel: e.target.value })}>
+                      <option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option>
+                    </select>
+                    <select className="p-2 border rounded" value={currentBooking.priority} onChange={e => setCurrentBooking({ ...currentBooking, priority: e.target.value })}>
+                      <option value="medium">Medium Priority</option>
+                      <option value="high">High Priority</option>
+                    </select>
+                  </div>
+                  <textarea placeholder="*Reason for booking..." className="w-full p-2 border rounded mb-4" rows="2" value={currentBooking.reason} onChange={e => setCurrentBooking({ ...currentBooking, reason: e.target.value })}></textarea>
+                  <div className="flex gap-4">
+                    <button onClick={addBooking} className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Confirm Booking</button>
+                    <button onClick={() => setShowBooking(false)} className="px-4 py-2 border rounded hover:bg-gray-50">Cancel</button>
+                  </div>
                 </div>
               )}
+
+              <div className="space-y-4">
+                {facultyBookings.map(booking => (
+                  <div key={booking.id} className="bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center group hover:border-blue-300 transition">
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${booking.priority === 'high' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>{booking.priority}</span>
+                        <h4 className="font-bold">{booking.faculty}</h4>
+                        <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">Year {booking.yearLevel}</span>
+                      </div>
+                      <p className="text-sm mt-1">Room {booking.classroom} @ {booking.time} <span className="text-gray-400">({booking.date})</span></p>
+                      <p className="text-xs text-gray-500 italic">"{booking.reason}"</p>
+                    </div>
+                    <button onClick={() => {
+                      const next = facultyBookings.filter(b => b.id !== booking.id);
+                      setFacultyBookings(next);
+                      save('bookings', next);
+                    }} className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><Trash2 className="w-5 h-5" /></button>
+                  </div>
+                ))}
+                {facultyBookings.length === 0 && <p className="text-center text-gray-400 py-8">No bookings yet</p>}
+              </div>
             </div>
           )}
 
           {activeTab === 'allocate' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Review & Allocate Rooms</h2>
-              
-              <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-600 rounded-r-lg">
-                <p className="text-green-900 font-bold text-lg">
-                  ✅ {classes.length} classes ready • {manualBookings.length} bookings
-                </p>
-              </div>
+            <div className="p-12 text-center">
+              <div className="max-w-xl mx-auto space-y-8">
+                {/* Phase 5: External Timetables & Upload Section */}
+                <div className="bg-white rounded-xl shadow-lg border p-6 text-left">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Upload className="w-5 h-5" /> Manual Timetables / Files</h3>
+                  <div className="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-lg mb-4">
+                    <div className="flex gap-4 items-end">
+                      <div className="flex-1">
+                        <label className="text-xs font-bold text-gray-500 mb-1 block">1. Select Target Room (for Image/PDF)</label>
+                        <select
+                          className="w-full p-2 border rounded font-sm"
+                          value={uploadRoom}
+                          onChange={e => setUploadRoom(e.target.value)}
+                        >
+                          <option value="">-- Select Room (Required for Non-CSV) --</option>
+                          {classrooms.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                        </select>
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-xs font-bold text-gray-500 mb-1 block">2. Upload File (CSV, PNG, PDF)</label>
+                        <input type="file" className="w-full text-sm" accept=".csv, .png, .jpg, .jpeg, .pdf" onChange={handleFileUpload} />
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">
+                      * CSV files are parsed for schedule (Day, 1, 2... format). Images/PDFs block the selected room entirely.
+                    </p>
+                  </div>
 
-              <div className="grid grid-cols-4 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-6">
-                  <h4 className="font-bold text-blue-900 mb-3">📚 Theory Rooms</h4>
-                  <p className="text-4xl font-bold text-blue-700">{classrooms.filter(r => r.type === 'THEORY').length}</p>
+                  <div className="space-y-2">
+                    {externalTimetables.map(file => (
+                      <div key={file.id} className="flex items-center justify-between bg-blue-50 p-3 rounded border border-blue-100">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          {file.type === 'csv' ? <FileText className="w-8 h-8 text-green-600" /> : <ImageIcon className="w-8 h-8 text-purple-600" />}
+                          <div className="min-w-0">
+                            <div className="font-bold text-sm truncate">{file.name}</div>
+                            <div className="text-xs text-gray-500">Target: {file.targetRoom} | {file.type.toUpperCase()}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {file.type === 'image' && (
+                            <img src={file.data} className="w-10 h-10 object-cover border rounded bg-white" alt="preview" />
+                          )}
+                          <button onClick={() => removeExternal(file.id)} className="text-red-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      </div>
+                    ))}
+                    {externalTimetables.length === 0 && <div className="text-center text-gray-400 italic text-sm">No manual files uploaded.</div>}
+                  </div>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6">
-                  <h4 className="font-bold text-green-900 mb-3">🧪 Lab 1</h4>
-                  <p className="text-2xl font-bold text-green-700">30 capacity</p>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6">
-                  <h4 className="font-bold text-green-900 mb-3">🧪 Lab 2</h4>
-                  <p className="text-2xl font-bold text-green-700">30 capacity</p>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6">
-                  <h4 className="font-bold text-green-900 mb-3">🧪 Labs 3 & 4</h4>
-                  <p className="text-2xl font-bold text-green-700">30 each</p>
+
+                <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                  <h2 className="text-2xl font-bold mb-4">Run Allocation Algorithm</h2>
+                  <ul className="text-left text-gray-600 mb-8 space-y-2 bg-white p-4 rounded-lg shadow-sm">
+                    <li>• Processing {timetables.length} internal timetables</li>
+                    <li>• Processing {facultyBookings.length} faculty bookings</li>
+                    <li>• Processing {externalTimetables.length} manual files (Priority: High)</li>
+                    <li>• Logic: <strong>{priorityMode === 'student' ? 'Student First' : 'Faculty First'}</strong></li>
+                  </ul>
+                  <button
+                    onClick={runAllocation}
+                    className="w-full bg-blue-900 text-white text-lg px-8 py-4 rounded-xl font-bold shadow-xl hover:bg-blue-800 hover:scale-105 transition flex items-center justify-center gap-3"
+                  >
+                    <CheckCircle className="w-6 h-6" /> Start Allocation
+                  </button>
                 </div>
               </div>
-
-              <button onClick={handleAllocateRooms}
-                className="bg-gradient-to-r from-green-700 to-green-500 hover:from-green-600 hover:to-green-400 text-white px-10 py-5 rounded-xl font-bold text-xl shadow-xl">
-                <CheckCircle className="w-7 h-7 inline mr-3" />Run Final Allocation
-              </button>
             </div>
           )}
 
-          {activeTab === 'results' && analytics && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Allocation Results</h2>
-                <button onClick={downloadReport}
-                  className="bg-green-700 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg">
-                  <Download className="w-5 h-5 inline mr-2" />Download Report
-                </button>
+          {activeTab === 'results' && (
+            <div className="p-6">
+              {/* Phase 4: Enhanced Results Header & Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-l-4 border-l-blue-600">
+                  <div className="text-gray-500 text-xs uppercase font-bold">Total Allocated</div>
+                  <div className="text-2xl font-bold text-blue-900">{allocations.length}</div>
+                </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-l-4 border-l-red-600">
+                  <div className="text-gray-500 text-xs uppercase font-bold">Conflicts</div>
+                  <div className="text-2xl font-bold text-red-900">{conflicts.length}</div>
+                </div>
+
+                {/* Filters */}
+                <div className="bg-white p-4 rounded-lg shadow-sm border col-span-2 flex items-center gap-4">
+                  <div className="text-gray-400"><Filter className="w-5 h-5" /></div>
+                  <div className="flex-1">
+                    <label className="text-xs font-bold text-gray-500">Filter Day</label>
+                    <select
+                      className="w-full text-sm p-1 border rounded"
+                      value={resultsFilter.day}
+                      onChange={e => setResultsFilter({ ...resultsFilter, day: e.target.value })}
+                    >
+                      <option value="All">All Days</option>
+                      {days.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs font-bold text-gray-500">Filter Time</label>
+                    <select
+                      className="w-full text-sm p-1 border rounded"
+                      value={resultsFilter.time}
+                      onChange={e => setResultsFilter({ ...resultsFilter, time: e.target.value })}
+                    >
+                      <option value="All">All Periods</option>
+                      {bookingTimeSlots.map(s => <option key={s.t} value={s.t}>{s.t}</option>)}
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-5 gap-4 mb-8">
-                <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md">
-                  <Users className="w-8 h-8 mb-3 text-blue-600" />
-                  <div className="text-3xl font-bold text-gray-800 mb-2">{analytics.totalAllocations}</div>
-                  <div className="text-sm text-gray-600 font-semibold">Total Sessions</div>
-                </div>
-                <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md">
-                  <Building2 className="w-8 h-8 mb-3 text-blue-600" />
-                  <div className="text-3xl font-bold text-gray-800 mb-2">{analytics.roomsUsed}/{analytics.totalRooms}</div>
-                  <div className="text-sm text-gray-600 font-semibold">Rooms Used</div>
-                </div>
-                <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md">
-                  <CheckCircle className="w-8 h-8 mb-3 text-green-600" />
-                  <div className="text-3xl font-bold text-gray-800 mb-2">{analytics.freeRooms}</div>
-                  <div className="text-sm text-gray-600 font-semibold">Free Rooms</div>
-                </div>
-                <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md">
-                  <TrendingUp className="w-8 h-8 mb-3 text-blue-600" />
-                  <div className="text-3xl font-bold text-gray-800 mb-2">{analytics.utilizationRate}%</div>
-                  <div className="text-sm text-gray-600 font-semibold">Utilization</div>
-                </div>
-                <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md">
-                  <AlertCircle className="w-8 h-8 mb-3 text-red-600" />
-                  <div className="text-3xl font-bold text-gray-800 mb-2">{conflicts.length}</div>
-                  <div className="text-sm text-gray-600 font-semibold">Conflicts</div>
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">📅 Class Timetables</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {classes.map(cls => (
-                    <button key={cls.id} onClick={() => setSelectedClassView(cls.id)}
-                      className="bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 border-2 border-blue-400 rounded-xl p-5 text-left shadow-md hover:shadow-xl transition-all">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-bold text-blue-900 text-lg">Year {cls.year} - Section {cls.section}</p>
-                          <p className="text-sm text-blue-700 mt-1">Semester {cls.semester} • {cls.processedSchedule?.length || 0} sessions</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="font-bold text-green-700 mb-3 flex items-center gap-2"><CheckCircle className="w-5 h-5" /> Allocated Resources</h3>
+                  <div className="bg-white border rounded-lg h-[600px] overflow-y-auto p-4 space-y-2 shadow-inner bg-gray-50">
+                    {filteredAllocations.map(alloc => (
+                      <div key={alloc.id} className={`p-3 border-l-4 border rounded shadow-sm ${alloc.type.startsWith('External') ? 'bg-purple-50 border-l-purple-500' : 'bg-white border-l-green-500'}`}>
+                        <div className="flex justify-between">
+                          <span className="font-bold text-gray-800">{alloc.classroom}</span>
+                          <span className={`text-xs px-2 rounded-full ${alloc.type.startsWith('External') ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>{alloc.type}</span>
                         </div>
-                        <Eye className="w-6 h-6 text-blue-700" />
+                        <div className="text-sm text-gray-600 mt-1">{alloc.day} {alloc.time}</div>
+                        <div className="text-sm font-semibold mt-1">{alloc.subject}</div>
+                        {alloc.faculty && <div className="text-xs text-gray-400">By: {alloc.faculty}</div>}
                       </div>
-                    </button>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-red-700 mb-3 flex items-center gap-2"><AlertCircle className="w-5 h-5" /> Conflicts (Action Required)</h3>
+                  <div className="bg-white border rounded-lg h-[600px] overflow-y-auto p-4 space-y-2 shadow-inner bg-red-50">
+                    {conflicts.map(conf => (
+                      <div key={conf.id} className="p-4 bg-white border-l-4 border-l-red-500 border rounded shadow-sm hover:shadow-md transition cursor-pointer" onClick={() => setShowConflictResolver(conf.id)}>
+                        <div className="font-bold text-red-800 mb-1">{conf.msg}</div>
+                        <div className="text-sm text-gray-600 mb-2">
+                          {conf.day} {conf.time} @ {conf.classroom}
+                        </div>
+                        <div className="text-xs bg-red-100 text-red-800 p-2 rounded">
+                          💡 Suggestion: {conf.sugg}
+                        </div>
+                        <div className="mt-2 text-center text-xs text-blue-600 font-bold">Click to Resolve</div>
+                      </div>
+                    ))}
+                    {conflicts.length === 0 && <div className="text-center text-gray-400 py-12">No conflicts detected! 🎉</div>}
+                  </div>
                 </div>
               </div>
 
-              {conflicts.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-bold text-red-900 mb-3 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" />Conflicts ({conflicts.length})
-                  </h3>
-                  <div className="border-2 border-red-200 rounded-lg bg-red-50 overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead className="bg-red-100">
-                        <tr>
-                          <th className="p-3 text-left font-bold">Subject</th>
-                          <th className="p-3 text-left font-bold">Year-Sec</th>
-                          <th className="p-3 text-left font-bold">Day & Time</th>
-                          <th className="p-3 text-left font-bold">Reason</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white">
-                        {conflicts.map((c, i) => (
-                          <tr key={i} className="border-t border-red-100">
-                            <td className="p-3">{c.subject}</td>
-                            <td className="p-3">{c.year}-{c.section}</td>
-                            <td className="p-3">{c.day} {c.time}</td>
-                            <td className="p-3 text-red-600 font-semibold">{c.reason}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+              {/* Conflict Resolver Modal */}
+              {showConflictResolver && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                  <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+                    <h3 className="text-xl font-bold mb-4">Resolve Conflict</h3>
+                    <p className="text-gray-600 mb-6">
+                      How would you like to handle this conflict?
+                    </p>
+                    <div className="space-y-3">
+                      <button onClick={() => resolveConflict(showConflictResolver, 'override')} className="w-full bg-red-600 text-white p-3 rounded font-bold hover:bg-red-700">
+                        Force Override (Remove existing)
+                      </button>
+                      <button onClick={() => resolveConflict(showConflictResolver, 'reschedule')} className="w-full bg-blue-600 text-white p-3 rounded font-bold hover:bg-blue-700">
+                        Ignore (I will reschedule manually)
+                      </button>
+                      <button onClick={() => setShowConflictResolver(null)} className="w-full border p-3 rounded font-bold hover:bg-gray-50">
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
           )}
+
+          {activeTab === 'unallocated' && (
+            <UnallocatedView
+              allocations={allocations}
+              timeSlots={bookingTimeSlots}
+              days={days}
+              classrooms={classrooms.map(c => c.name)}
+              filters={resultsFilter}
+              setFilters={setResultsFilter}
+            />
+          )}
+
         </div>
       </div>
-
-      {/* Manual Booking Modal */}
-      {showManualBookingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-bold">New Booking</h3>
-              <button onClick={() => setShowManualBookingModal(false)}><X className="w-6 h-6" /></button>
-            </div>
-            <div className="p-4 space-y-4">
-              <select value={currentBooking.faculty} onChange={(e) => setCurrentBooking({ ...currentBooking, faculty: e.target.value})} className="w-full p-3 border rounded">
-                <option value="">Select faculty...</option>
-                {facultyList.map(f => <option key={f} value={f}>{f}</option>)}
-              </select>
-              <select value={currentBooking.room} onChange={(e) => setCurrentBooking({ ...currentBooking, room: e.target.value})} className="w-full p-3 border rounded">
-                <option value="">Select room...</option>
-                {classrooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-              </select>
-              <div className="grid grid-cols-2 gap-3">
-                <select value={currentBooking.day} onChange={(e) => setCurrentBooking({ ...currentBooking, day: e.target.value})} className="w-full p-3 border rounded">
-                  {days.map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-                <select value={currentBooking.time} onChange={(e) => setCurrentBooking({ ...currentBooking, time: e.target.value})} className="w-full p-3 border rounded">
-                  {timeSlots.map(s => <option key={s.time} value={s.time}>{s.label}</option>)}
-                </select>
-              </div>
-              <input type="number" placeholder="Duration (min)" value={currentBooking.duration} onChange={(e) => setCurrentBooking({ ...currentBooking, duration: parseInt(e.target.value)})} className="w-full p-3 border rounded" />
-              <textarea placeholder="Reason..." value={currentBooking.reason} onChange={(e) => setCurrentBooking({ ...currentBooking, reason: e.target.value})} className="w-full p-3 border rounded" rows="3"></textarea>
-            </div>
-            <div className="p-4 border-t flex gap-3 justify-end bg-gray-50">
-              <button onClick={() => setShowManualBookingModal(false)} className="px-4 py-2 border rounded">Cancel</button>
-              <button onClick={addManualBooking} className="px-4 py-2 bg-green-700 text-white rounded">Book Room</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {renderClassTimetableView()}
     </div>
   );
 };
 
-export default ITClassroomAllocation;
+export default SmartClassroomSystem;
