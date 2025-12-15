@@ -177,6 +177,23 @@ const TimetablePreview = ({ data, timeSlots, days }) => {
                                     </tr>
                                 );
                             })}
+=======
+                            {days.map(day => (
+                                <tr key={day}>
+                                    <td className="border border-black font-bold bg-blue-50">{day}</td>
+                                    {timeSlots.map((slot, index) => (
+                                        <React.Fragment key={slot.p}>
+                                            {slot.t === '10:10-11:00' && <td className="p-0 border-none"></td>} {/* Phantom cell for Break column rowspan */}
+
+                                            <td className="border border-black h-8 relative p-0.5">
+                                                <div className="font-bold text-blue-900 leading-tight">{schedule[day]?.[slot.p] || ''}</div>
+                                            </td>
+
+                                            {slot.t === '1:30-2:15' && <td className="p-0 border-none"></td>} {/* Phantom cell for Lunch column rowspan */}
+                                        </React.Fragment>
+                                    ))}
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
 
@@ -220,6 +237,7 @@ const TimetablePreview = ({ data, timeSlots, days }) => {
                                             return labsList.length > 0 ? labsList.join(', ') : (course.labResource || '-');
                                         })()}
                                     </td>
+                                    <td className="border border-black p-1 text-center italic">{course.labResource || '-'}</td>
                                     <td className="border border-black p-1 text-center">{course.curr}</td>
                                     <td className="border border-black p-1 text-center font-bold">{course.allot}</td>
                                 </tr>
