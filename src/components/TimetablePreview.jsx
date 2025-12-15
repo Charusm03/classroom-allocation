@@ -177,7 +177,6 @@ const TimetablePreview = ({ data, timeSlots, days }) => {
                                     </tr>
                                 );
                             })}
-=======
                             {days.map(day => (
                                 <tr key={day}>
                                     <td className="border border-black font-bold bg-blue-50">{day}</td>
